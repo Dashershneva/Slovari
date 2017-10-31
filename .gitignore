@@ -1,0 +1,8 @@
+.secret.json
+*.sqlite3
+.git/
+.idea/
+*wsgi.py
+old2new_tei/
+media/
+*migrations/
