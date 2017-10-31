@@ -1,0 +1,26 @@
+{"mappings": {
+	"entry": {
+      "dynamic": true,
+		"properties": {
+            "xml:id" : {"type": "string"},
+            "dict_name" : {"type": "string"},
+            "content": {
+              "properties": {
+                "form": {"dynamic": true,"properties": {
+                  "type": {"type": "string"},
+                  "orth": {"type": "string"},
+                  "usg": {"dynamic": true,"properties": {"text": {"type": "string"}, "type": {"type": "string"}}},
+                   "lbl": {"dynamic": true,"properties": {"text": {"type": "string"}, "type": {"type": "string"}}}
+                }},
+                "sense" : {"dynamic": true,"properties":
+                {"cit": {"dynamic": true,"properties": {"quote": {"type": "string"}, "type": {"type": "string"}}},
+                "lang": {"dynamic": true,"properties": {"text": {"type": "string"}, "xml:lang": {"type": "string"}, "orig": {"type": "string"}, "split": {"type": "string"}}},
+                "usg": {"dynamic": true,"properties": {"quote": {"type": "string"}, "type": {"type": "string"}}},
+                "ref": {"dynamic": true,"properties": {"text": {"type": "string"}, "type": {"type": "string"}}},
+                "note": {"dynamic": true,"properties": {"text": {"type": "string"}, "type": {"type": "string"}}}}
+                }
+              }
+            }
+		}
+	}
+}}

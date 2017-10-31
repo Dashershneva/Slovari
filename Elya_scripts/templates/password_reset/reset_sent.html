@@ -1,0 +1,7 @@
+{% extends '_base_basic.html' %}
+
+{% block title %}Восстановление пароля{% endblock %}
+
+{% block body %}
+    <h4 class="text-center">Письмо с инструкциями по восстановлению пароля было отправлено на адрес <strong>{{ email|truncatechars:6 }}</strong></h4><br><br>
+{% endblock %}

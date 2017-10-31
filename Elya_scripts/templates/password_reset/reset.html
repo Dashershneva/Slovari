@@ -1,0 +1,28 @@
+{% extends '_base_basic.html' %}
+{% load static %}
+
+{% block title %}Сброс пароля{% endblock %}
+{% block headers %}
+	{{ block.super }}
+
+
+{% endblock %}
+
+{% block body %}
+	{% if invalid %}{% url "password_reset_recover" as recovery_url %}
+        <div class="text-danger invalid_login">Извините, это неправильная ссылка на сброс пароля. Вы можете <a href="{{ recovery_url }}">получить новую ссылку</a>.<br><br></div>
+	{% else %}
+
+        <h4 class="text-center">Пожалуйста, задайте новый пароль для пользователя "{{ username }}".</h4>
+
+		<form method="post" action="{% url "password_reset_reset" token %}" class="login_form" role="form">
+			{% csrf_token %}
+            <div class="form-group">
+                <input id="id_password1" name="password1" type="password"  class="form-control" placeholder="Новый пароль" required autofocus>
+                <input id="id_password2" name="password2" type="password"  class="form-control" placeholder="Новый пароль (подтверждение)" required>
+
+            </div>
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Установить новый пароль</button>
+		</form>
+	{% endif %}
+{% endblock %}
