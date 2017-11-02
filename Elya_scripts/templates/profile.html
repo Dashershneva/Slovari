@@ -1,0 +1,9 @@
+{% extends '_base_basic.html' %}
+{% load static %}
+
+{% block body %}
+  <div id='profile'>
+  <p><a href="{% url 'upload' request.user %}">Загрузить словарь.</a></p>
+<p><a href="{% url "handle_uploads" request.user %}">Просмотреть добавленные файлы.</a></p>
+  </div>
+{% endblock %}

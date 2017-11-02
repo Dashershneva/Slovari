@@ -1,0 +1,48 @@
+{% extends '_base_basic.html' %}
+{% load static %}
+
+{% block headers %}
+	{{ block.super }}
+
+{% endblock %}
+
+{% block body %}
+	<div class="rate-container">
+
+    {% if files %}
+       <h3 class="text-center">Вы зарузили эти файлы:</h3>
+		<form method="post" class="form-horizontal" role="form">
+			{% csrf_token %}
+            <table  class="table">
+            <thead>
+            <tr><th>Имя файла</th>
+            <td>Дата</td></tr>
+            </thead>
+            <tbody>
+			{% for f in files %}
+                <tr>
+                    <td><input type="checkbox" value="{{ f.id }}" id="dictfile{{ f.id }}" name="files[]"> <label for="dictfile{{ f.id }}">{{ f.file }}</label></td>
+                    <td>{{ f.uploaded_at }}</td>
+                </tr>
+
+            {% endfor %}
+            </tbody>
+            </table>
+            <label> Что сделать с выбранными файлами?
+                <select name="action" class="form-control">
+                    <option value="delete">удалить</option>
+{#                    <option value="">добавить в индекс</option>#}
+                </select>
+            </label>
+            <div class="row text-center">
+				<button type="submit" class="btn btn-success">Выполнить</button>
+			</div>
+		</form>
+    {% endif %}
+    {% if  not files %}
+    <p>У вас нет загруженных файлов</p>
+  {% endif %}
+
+ <p><a href="{% url 'profile'  request.user  %}">На страницу профиля.</a></p>
+	</div>
+{% endblock %}

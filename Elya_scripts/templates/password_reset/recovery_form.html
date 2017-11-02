@@ -1,0 +1,29 @@
+{% extends '_base_basic.html' %}
+{% load static %}
+
+{% block title %}Восстановление пароля{% endblock %}
+{% block headers %}
+	{{ block.super }}
+
+	<link rel="stylesheet" type="text/css" href="{% static "css/profile.css" %}">
+
+{% endblock %}
+{% block body %}
+
+	<div class="rate-container">
+		<h4 class="text-center">Мы вышлем вам ссылку для сброса пароля</h4>
+
+		<div class="text-danger invalid_login">{% if form.errors %}Такая почта или логин не найдены{% endif %}</div>
+
+		<form method="post" action="{{ url }}" class="login_form" role="form">
+			{% csrf_token %}
+
+			<div class="form-group">
+	        <input id="id_username_or_email" name="username_or_email" type="text" class="form-control" placeholder="Почта или логин" required autofocus>
+			</div>
+			<button class="btn btn-lg btn-primary btn-block" type="submit">Продолжить</button>
+
+		</form>
+	</div>
+
+{% endblock %}

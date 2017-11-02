@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Вышка Словари</title>
+</head>
+<body>
+
+<table>
+    <tr>
+        <td width="60%" valign="top">
+            <h2>Поиск</h2>
+            <form action="/slovari/search">
+                <input type="text" name="q" placeholder="Введите слово" value="{{ word  }}" autofocus>
+                <input type="submit" value="Искать">
+            </form>
+            {% if empty %}
+                <p>Я ничего не нашел. (╯°□°)╯︵ ┻━┻ </p>
+            {% else %}
+                    <ol>
+                    {% for key, values in trans.items %}
+                        <h3>{{ key }}</h3>
+                        {% for i in values %}
+                        <li>{{ i.token1.text }} - {{ i.token2.text }} [{{ i.token2.lang }}] ({{ i.source }})</li>
+                        {% endfor %}
+                    {% endfor %}
+                    </ol>
+        {% endif %}
+
+        </td>
+        <td valign="top">
+            <h2>Последние запросы:</h2>
+            {% for i in queries %}
+                <p>{{ i }}</p>
+            {% endfor %}
+        <a href="/">На главную</a>
+        </td>
+    </tr>
+</table>
+
+</body>
+</html>

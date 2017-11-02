@@ -1,0 +1,624 @@
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+  <xs:element name="name" type="xs:string"/>
+  <xs:element name="p" type="xs:string"/>
+  <xs:element name="extent" type="xs:int"/>
+  <xs:element name="author" type="xs:string"/>
+  <xs:element name="publisher" type="xs:string"/>
+  <xs:element name="editor" type="xs:string"/>
+  <xs:element name="edition" type="xs:string"/>
+  <xs:element name="translator" type="xs:string"/>
+  <xs:element name="pubdate" type="xs:string"/>
+  <xs:element name="isbn" type="xs:string"/>
+  <xs:element name="iso" type="xs:string"/>
+  <xs:element name="text" type="xs:string"/>
+  <xs:element name="index" type="xs:string"/>
+  <xs:element name="symbol" type="xs:string"/>
+  <xs:element name="metalemma" type="xs:string"/>
+  <xs:element name="pic" type="xs:string"/>
+  <xs:element name="set" type="xs:string"/>
+  <xs:element name="quote" type="xs:string"/>
+  <xs:element name="hyph" type="xs:string"/>
+  <xs:element name="pos" type="xs:string"/>
+  <xs:element name="gender" type="xs:string"/>
+  <xs:element name="num" type="xs:string"/>
+  <xs:element name="per" type="xs:string"/>
+  <xs:element name="animat" type="xs:string"/>
+  <xs:element name="declen" type="xs:string"/>
+  <xs:element name="mood" type="xs:string"/>
+  <xs:element name="asp" type="xs:string"/>
+  <xs:element name="transit" type="xs:string"/>
+  <xs:element name="pron_type" type="xs:string"/>
+  <xs:element name="gov" type="xs:string"/>
+  <xs:element name="iType" type="xs:string"/>
+  <xs:element name="case" type="xs:string"/>
+  <xs:element name="tns" type="xs:string"/>
+  <xs:element name="paradigm" type="xs:string"/>
+  
+    <xs:element name="note">
+    <xs:complexType mixed="true">
+      <xs:choice maxOccurs="unbounded" minOccurs="0">
+		<xs:element ref="stress"/>
+		<xs:element ref="cit"/>
+		<xs:element ref="language"/>
+		<xs:element ref="text"/>
+		<xs:element ref="ref"/>
+		<xs:element ref="lbl"/>
+		<xs:element ref="usg"/>
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+  
+  <xs:element name="stress">
+    <xs:complexType mixed="true">
+      <xs:choice maxOccurs="unbounded" minOccurs="0">
+        <xs:element ref="note"/>
+		<xs:element ref="cit"/>
+		<xs:element ref="language"/>
+		<xs:element ref="text"/>
+		<xs:element ref="ref"/>
+		<xs:element ref="lbl"/>
+		<xs:element ref="usg"/>
+      </xs:choice>
+      <xs:attribute type="xs:string" name="syl_n_left" use="optional"/>
+	  <xs:attribute type="xs:string" name="syl_n_right" use="optional"/>
+    </xs:complexType>
+  </xs:element>
+  
+  <xs:element name="lbl">
+    <xs:complexType mixed="true">
+      <xs:choice maxOccurs="unbounded" minOccurs="0">
+        <xs:element ref="note"/>
+		<xs:element ref="stress"/>
+		<xs:element ref="cit"/>
+		<xs:element ref="language"/>
+		<xs:element ref="text"/>
+		<xs:element ref="ref"/>
+		<xs:element ref="lbl"/>
+		<xs:element ref="usg"/>
+      </xs:choice>
+      <xs:attribute type="xs:string" name="type" use="optional"/>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="respStmt">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="name"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="sourceDesc">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="ref" minOccurs="0" maxOccurs="unbounded" />
+        <xs:element ref="p"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="fileDesc">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="respStmt"/>
+        <xs:element ref="extent"/>
+        <xs:element ref="sourceDesc"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="title">
+    <xs:complexType>
+      <xs:simpleContent>
+        <xs:extension base="xs:string">
+          <xs:attribute type="xs:string" name="dict_id" use="optional"/>
+        </xs:extension>
+      </xs:simpleContent>
+    </xs:complexType>
+  </xs:element>
+  
+  <xs:element name="volume">
+    <xs:complexType>
+      <xs:simpleContent>
+        <xs:extension base="xs:string">
+          <xs:attribute type="xs:string" name="n" use="optional"/>
+          <xs:attribute type="xs:string" name="of" use="optional"/>
+        </xs:extension>
+      </xs:simpleContent>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:attributeGroup name="language-type">
+      <xs:attribute name="type" use="optional">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:pattern value="content|source|target|example|etym_source|etym_target|etym"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+  </xs:attributeGroup>
+  
+    <xs:attributeGroup name="iso639">
+      <xs:attribute name="type" >
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:pattern value="iso639-3"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+  </xs:attributeGroup>
+  
+  <xs:element name="language">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="idno"/>
+      </xs:sequence>
+      <xs:attributeGroup ref="language-type"/>
+	  <xs:attribute type="xs:string" name="iso" use="optional"/>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="script">
+    <xs:complexType>
+      <xs:simpleContent>
+        <xs:extension base="xs:string">
+          <xs:attribute type="xs:string" name="type" use="required"/>
+        </xs:extension>
+      </xs:simpleContent>
+    </xs:complexType>
+  </xs:element>
+  
+    <xs:element name="idno">
+    <xs:complexType>
+      <xs:simpleContent>
+        <xs:extension base="xs:string">
+          <xs:attributeGroup ref="iso639"/>
+        </xs:extension>
+      </xs:simpleContent>
+    </xs:complexType>
+  </xs:element>
+  
+  <xs:element name="head">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="title"/>
+        <xs:element ref="volume" minOccurs="0" maxOccurs="1" />
+        <xs:element ref="author" minOccurs="0" maxOccurs="1" />
+        <xs:element ref="publisher" minOccurs="0" maxOccurs="1" />
+        <xs:element ref="editor" minOccurs="0" maxOccurs="1" />
+        <xs:element ref="edition" minOccurs="0" maxOccurs="1" />
+        <xs:element ref="translator" minOccurs="0" maxOccurs="1" />
+        <xs:element ref="pubdate" minOccurs="0" maxOccurs="1" />
+        <xs:element ref="isbn" minOccurs="0" maxOccurs="1" />
+        <xs:element ref="iso" minOccurs="0" maxOccurs="1" />
+        <xs:element ref="language" minOccurs="1" maxOccurs="unbounded" />
+        <xs:element ref="script" minOccurs="0" maxOccurs="1" />
+		<xs:element ref="note" minOccurs="0" maxOccurs="1" />
+		<xs:element ref="text" minOccurs="0" maxOccurs="1" />
+		<xs:element ref="ref" minOccurs="0" maxOccurs="1" />
+		<xs:element ref="lbl" minOccurs="0" maxOccurs="1" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+    <xs:attributeGroup name="cit-type">
+      <xs:attribute name="type"  use="optional">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:pattern value="example|gender_parallel|translation|example|colloc|ex_translation|etym_true|etym_false|etym|cognate|compare"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+  </xs:attributeGroup>
+
+  <xs:element name="etym">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="text" minOccurs="0" maxOccurs="unbounded" />
+        <xs:element ref="cit" maxOccurs="unbounded" minOccurs="0"/>
+        <xs:element ref="note" minOccurs="0" maxOccurs="unbounded" />
+		<xs:element ref="stress" minOccurs="0" maxOccurs="unbounded" />
+		<xs:element ref="language" minOccurs="0" maxOccurs="unbounded" />
+		<xs:element ref="ref" minOccurs="0" maxOccurs="unbounded" />
+		<xs:element ref="lbl" minOccurs="0" maxOccurs="unbounded" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  
+  <xs:element name="cit">
+    <xs:complexType mixed="true">
+      <xs:choice maxOccurs="unbounded" minOccurs="0">
+        <xs:element ref="quote"  minOccurs="1" maxOccurs="unbounded" />
+        <xs:element ref="gramGrp" minOccurs="0"/>
+		<xs:element ref="cit" minOccurs="0"/>
+		<xs:element ref="form" minOccurs="0"/>
+		<xs:element ref="text" minOccurs="0"/>
+		<xs:element ref="script" minOccurs="0"/>
+		<xs:element ref="ref" minOccurs="0"/>
+		<xs:element ref="src" minOccurs="0"/>
+		<xs:element ref="stress" minOccurs="0"/>
+		<xs:element ref="note"/>
+		<xs:element ref="language"/>
+		<xs:element ref="lbl"/>
+		<xs:element ref="usg"/>
+      </xs:choice>
+      <xs:attributeGroup ref="cit-type"/>
+    </xs:complexType>
+  </xs:element>
+  
+    <xs:attributeGroup name="orth-type">
+      <xs:attribute name="type"  use="optional">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:pattern value="lemma|var"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+  </xs:attributeGroup>
+  
+    <xs:attributeGroup name="orth-extent">
+      <xs:attribute name="extent"  use="optional">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:pattern value="full|part|suff|pref|inf"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+  </xs:attributeGroup>
+  
+  <xs:element name="orth">
+    <xs:complexType mixed="true">
+      <xs:choice maxOccurs="unbounded" minOccurs="0">
+        <xs:element ref="note"/>
+		<xs:element ref="stress"/>
+		<xs:element ref="cit"/>
+		<xs:element ref="language"/>
+		<xs:element ref="text"/>
+		<xs:element ref="ref"/>
+		<xs:element ref="lbl"/>
+		<xs:element ref="usg"/>
+      </xs:choice>
+      <xs:attributeGroup ref="orth-type"/>
+      <xs:attributeGroup ref="orth-extent"/>
+    </xs:complexType>
+  </xs:element>
+  
+    <xs:attributeGroup name="phon-type">
+      <xs:attribute name="type"  use="optional">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:pattern value="main|var|alter"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+  </xs:attributeGroup>
+  
+  <xs:element name="phon">
+    <xs:complexType mixed="true">
+      <xs:choice maxOccurs="unbounded" minOccurs="0">
+        <xs:element ref="note"/>
+		<xs:element ref="stress"/>
+		<xs:element ref="cit"/>
+		<xs:element ref="language"/>
+		<xs:element ref="text"/>
+		<xs:element ref="ref"/>
+		<xs:element ref="lbl"/>
+		<xs:element ref="usg"/>
+      </xs:choice>
+          <xs:attributeGroup ref="orth-extent"/>
+		  <xs:attributeGroup ref="phon-type"/>
+    </xs:complexType>
+  </xs:element>
+  
+    <xs:attributeGroup name="usg-type">
+      <xs:attribute name="type"  use="optional">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:pattern value="plev|geo|dom|time|reg|style|acc|editor|other"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+  </xs:attributeGroup>
+  
+  <xs:element name="usg">
+    <xs:complexType mixed="true">
+      <xs:choice maxOccurs="unbounded" minOccurs="0">
+        <xs:element ref="note"/>
+		<xs:element ref="stress"/>
+		<xs:element ref="cit"/>
+		<xs:element ref="language"/>
+		<xs:element ref="text"/>
+		<xs:element ref="ref"/>
+		<xs:element ref="lbl"/>
+      </xs:choice>
+          <xs:attributeGroup ref="usg-type"/>
+    </xs:complexType>
+  </xs:element>
+ 
+  <xs:element name="superEntry">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="metalemma" minOccurs="0" maxOccurs="1" />
+        <xs:element ref="entry" maxOccurs="unbounded" minOccurs="0"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  
+  <xs:element name="div">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="superEntry" maxOccurs="unbounded" minOccurs="1"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="body">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="div"  maxOccurs="unbounded" minOccurs="1"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  
+  <xs:element name="front">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="head"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="xml">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="fileDesc"/>
+        <xs:element ref="front"/>
+        <xs:element ref="body"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  
+  <xs:element name="src">
+    <xs:complexType mixed="true">
+      <xs:choice maxOccurs="unbounded" minOccurs="0">
+        <xs:element ref="note"/>
+		<xs:element ref="stress"/>
+		<xs:element ref="cit"/>
+		<xs:element ref="language"/>
+		<xs:element ref="text"/>
+		<xs:element ref="ref"/>
+		<xs:element ref="lbl"/>
+      </xs:choice>
+          <xs:attribute type="xs:string" name="code" use="optional"/>
+    </xs:complexType>
+  </xs:element>
+  
+  <xs:element name="def">
+    <xs:complexType mixed="true">
+      <xs:choice maxOccurs="unbounded" minOccurs="0">
+        <xs:element ref="text" minOccurs="0"/>
+        <xs:element ref="ref" minOccurs="0"/>
+        <xs:element ref="pic" minOccurs="0"/>
+        <xs:element ref="src" minOccurs="0"/>
+		<xs:element ref="note"/>
+		<xs:element ref="stress"/>
+		<xs:element ref="cit"/>
+		<xs:element ref="language"/>
+		<xs:element ref="lbl"/>
+		<xs:element ref="usg"/>
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+  
+    <xs:attributeGroup name="ref-type">
+      <xs:attribute name="type"  use="optional">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:pattern value="xr|external"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+  </xs:attributeGroup>
+  
+  <xs:element name="ref">
+    <xs:complexType mixed="true">
+      <xs:choice maxOccurs="unbounded" minOccurs="0">
+        <xs:element ref="note"/>
+		<xs:element ref="stress"/>
+		<xs:element ref="cit"/>
+		<xs:element ref="language"/>
+		<xs:element ref="text"/>
+		<xs:element ref="ref"/>
+		<xs:element ref="lbl"/>
+      </xs:choice>
+          <xs:attribute type="xs:string" name="n" use="optional"/>
+          <xs:attribute type="xs:string" name="code" use="optional"/>
+		  <xs:attribute type="xs:string" name="target" use="optional"/>
+		  <xs:attributeGroup ref="ref-type" />
+    </xs:complexType>
+  </xs:element>
+  
+    <xs:attributeGroup name="xr-type">
+      <xs:attribute name="type"  use="optional">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:pattern value="synonym|antonym|hyperonym|hyponym"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+  </xs:attributeGroup>
+  
+  <xs:element name="xr">
+    <xs:complexType>
+      <xs:choice maxOccurs="unbounded" minOccurs="0">
+        <xs:element ref="lbl" minOccurs="0"/>
+        <xs:element ref="ref" maxOccurs="unbounded" minOccurs="0"/>
+        <xs:element ref="set" minOccurs="0"/>
+		<xs:element ref="note"/>
+		<xs:element ref="stress"/>
+		<xs:element ref="cit"/>
+		<xs:element ref="language"/>
+		<xs:element ref="text"/>
+      </xs:choice>
+      <xs:attributeGroup ref="xr-type" />
+    </xs:complexType>
+  </xs:element>
+  
+  <xs:element name="sense">
+    <xs:complexType mixed="true">
+      <xs:choice maxOccurs="unbounded" minOccurs="0">
+        <xs:element ref="usg"/>
+		<xs:element ref="gramGrp"/>
+        <xs:element ref="lbl"/>
+        <xs:element ref="def"/>
+        <xs:element ref="cit"/>
+        <xs:element ref="note"/>
+		<xs:element ref="stress"/>
+		<xs:element ref="language"/>
+		<xs:element ref="text"/>
+		<xs:element ref="ref"/>
+      </xs:choice>
+      <xs:attribute type="xs:string" name="n" use="optional"/>
+    </xs:complexType>
+  </xs:element>
+  
+  <xs:element name="gramGrp">
+    <xs:complexType mixed="true">
+      <xs:sequence>
+        <xs:element ref="paradigm" minOccurs="0"/>
+        <xs:element ref="pos" minOccurs="0"/>
+        <xs:element ref="gender" minOccurs="0"/>
+        <xs:element ref="num" minOccurs="0"/>
+        <xs:element ref="per" minOccurs="0"/>
+        <xs:element ref="animat" minOccurs="0"/>
+        <xs:element ref="declen" minOccurs="0"/>
+        <xs:element ref="mood" minOccurs="0"/>
+        <xs:element ref="asp" minOccurs="0"/>
+		<xs:element ref="tns" minOccurs="0"/>
+        <xs:element ref="transit" minOccurs="0"/>
+        <xs:element ref="pron_type" minOccurs="0"/>
+        <xs:element ref="gov" minOccurs="0"/>
+        <xs:element ref="iType" minOccurs="0"/>
+        <xs:element ref="note" minOccurs="0"/>
+		<xs:element ref="stress" minOccurs="0" maxOccurs="unbounded" />
+		<xs:element ref="cit" minOccurs="0" maxOccurs="unbounded" />
+		<xs:element ref="language" minOccurs="0" maxOccurs="unbounded" />
+		<xs:element ref="text" minOccurs="0" maxOccurs="unbounded" />
+		<xs:element ref="ref" minOccurs="0" maxOccurs="unbounded" />
+		<xs:element ref="lbl" minOccurs="0" maxOccurs="unbounded" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  
+  <xs:element name="inflection">
+    <xs:complexType mixed="true">
+      <xs:sequence>
+        <xs:element ref="case"  minOccurs="0" maxOccurs="unbounded" />
+        <xs:element ref="num"  minOccurs="0" maxOccurs="unbounded" />
+        <xs:element ref="tns" minOccurs="0" maxOccurs="unbounded" />
+        <xs:element ref="gender"  minOccurs="0" maxOccurs="unbounded" />
+          <xs:element ref="per"  minOccurs="0" maxOccurs="unbounded" />
+		<xs:element ref="orth"  minOccurs="0" maxOccurs="unbounded" />
+		<xs:element ref="phon"  minOccurs="0" maxOccurs="unbounded" />
+        <xs:element ref="lbl" minOccurs="0" maxOccurs="unbounded" />
+        <xs:element ref="note"  minOccurs="0" maxOccurs="unbounded" />
+		<xs:element ref="stress" minOccurs="0" maxOccurs="unbounded" />
+		<xs:element ref="cit" minOccurs="0" maxOccurs="unbounded" />
+		<xs:element ref="language" minOccurs="0" maxOccurs="unbounded" />
+		<xs:element ref="text" minOccurs="0" maxOccurs="unbounded" />
+		<xs:element ref="ref" minOccurs="0" maxOccurs="unbounded" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  
+    <xs:attributeGroup name="form-type">
+      <xs:attribute name="type"  use="optional">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:pattern value="inflected"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+  </xs:attributeGroup>
+  
+  <xs:element name="form">
+    <xs:complexType>
+      <xs:choice maxOccurs="unbounded" minOccurs="0">
+        <xs:element ref="orth"/>
+        <xs:element ref="phon"/>
+        <xs:element ref="hyph"/>
+        <xs:element ref="usg" maxOccurs="unbounded" minOccurs="0"/>
+		<xs:element ref="gramGrp"/>
+		<xs:element ref="inflection"/>
+        <xs:element ref="lbl"/>
+        <xs:element ref="note"/>
+		<xs:element ref="stress"/>
+		<xs:element ref="cit"/>
+		<xs:element ref="language"/>
+		<xs:element ref="text"/>
+		<xs:element ref="ref"/>
+      </xs:choice>
+	  <xs:attributeGroup ref="form-type" />
+    </xs:complexType>
+  </xs:element>
+  
+    <xs:attributeGroup name="entry-type">
+      <xs:attribute name="type"  use="optional">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:pattern value="hom|main|xref|affix|abbr|supplemental|foreign"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+  </xs:attributeGroup>
+  
+  <xs:element name="entry">
+    <xs:complexType>
+      <xs:choice maxOccurs="unbounded" minOccurs="0">
+	    <xs:element ref="index"/>
+	    <xs:element ref="symbol"/>
+        <xs:element ref="form"/>
+        <xs:element ref="gramGrp"/>
+        <xs:element ref="ref"/>
+        <xs:element ref="sense"/>
+        <xs:element ref="re"/>
+        <xs:element ref="etym"/>
+        <xs:element ref="xr"/>
+        <xs:element ref="note"/>
+		<xs:element ref="stress"/>
+		<xs:element ref="cit"/>
+		<xs:element ref="language"/>
+		<xs:element ref="text"/>
+		<xs:element ref="lbl"/>
+		<xs:element ref="usg"/>
+      </xs:choice>
+      <xs:attributeGroup ref="entry-type"/>
+    </xs:complexType>
+  </xs:element>
+  
+  <xs:element name="re">
+    <xs:complexType>
+      <xs:choice maxOccurs="unbounded" minOccurs="0">
+	    <xs:element ref="index"/>
+	    <xs:element ref="symbol"/>
+        <xs:element ref="form"/>
+        <xs:element ref="gramGrp"/>
+        <xs:element ref="ref"/>
+        <xs:element ref="sense"/>
+        <xs:element ref="re"/>
+        <xs:element ref="etym"/>
+        <xs:element ref="xr"/>
+        <xs:element ref="note"/>
+		<xs:element ref="stress"/>
+		<xs:element ref="cit"/>
+		<xs:element ref="language"/>
+		<xs:element ref="text"/>
+		<xs:element ref="lbl"/>
+		<xs:element ref="usg"/>
+		<xs:element ref="superEntry"/>
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+
+</xs:schema>

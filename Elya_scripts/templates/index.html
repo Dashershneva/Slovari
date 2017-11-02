@@ -1,0 +1,32 @@
+{% extends '_base_basic.html' %}
+
+{% block body %}
+    <form action="#">
+    <div class="form-group">
+        <div class="input-group">
+          <input type="text" id="search" name="q" value="{{ q }}" class="form-control" placeholder="Введите запрос" required autofocus>
+          <span class="input-group-btn">
+            <button class="btn btn-default" type="button">Искать</button>
+          </span>
+        </div><!-- /input-group -->
+    </div>
+    </form>
+    {% if total and total != '0' %}
+<p>Всего результатов: {{ total }}</p>
+    {% endif %}
+    <div class="container grid"  data-masonry='{  }'>
+
+      {% for w in words %}
+        <div class="w3-card-4 grid-item">
+            <header class="w3-container w3-cyan">
+              <h4>{{ w.word | safe}} </h4>
+            </header>
+            <div class="w3-container">
+              <p> {{ w.content | safe}} <a style="float: right; margin-bottom: 0.3em; "> &dArr; </a></p>
+            </div>
+
+        </div>
+      {% endfor %}
+
+    </div>
+{% endblock %}

@@ -1,0 +1,114 @@
+{% extends '_base_basic.html' %}
+{% load static %}
+
+{% block headers %}
+	{{ block.super }}
+
+{% endblock %}
+
+{% block body %}
+	<div class="rate-container">
+    <div class="col-sm-3">
+        <div class="row">
+            <h3 class="text-center"></h3>
+            <p><a href="{% url "handle_uploads" request.user %}">Просмотреть добавленные файлы.</a></p>
+
+            <p><a href="{% url 'profile'  request.user  %}">На страницу профиля.</a></p>
+        </div>
+    </div>
+    <div class="col-sm-9">
+        <div class="row">
+           <h3 class="text-center">Добавление нового словаря</h3>
+
+        {#		{% if error %}#}
+        {#			<div class="text-danger invalid_login">{{ error }}</div>#}
+        {#		{% endif %}#}
+
+            {% if show_form %}
+
+                {% if not valid %}
+                    <div class="alert alert-danger alert-dismissible" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    Файл не прошел валидацию.
+                    </div>
+                    {% if error %}
+                        <div class="alert alert-warning alert-dismissible" role="alert">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        Cообщение об ошибке:<br>
+                         <code>{{ error }}</code>
+                        </div>
+                    {% endif %}
+                    {% endif %}
+
+                <br><br>
+
+                <form action="{% url 'upload' request.user %}" method="post" enctype="multipart/form-data" class="form-horizontal" role="form">
+                    {% csrf_token %}
+
+                    <div class="input-group">
+                        <label for="id_file" class="col-sm-4 control-label">Файл со словарем TEI</label>
+                        <div class="col-sm-5">
+                            <input id="id_file"  type="file" class="form-control" name="file" required>
+                        </div>
+                      <span class="input-group-btn">
+                        <button type="submit" class="btn btn-success">Загрузить</button>
+                      </span>
+                    </div>
+                        <p class="text-danger text-center">Файл должен быть в кодировке UTF-8.</p>
+                    <label for="id_user" hidden>User:</label>
+                    <input id="id_user" class="form-control hidden" name="user" value="{{ request.user.id }}" required hidden>
+                </form>
+            {% endif %}
+
+            {% if not show_form %}
+                {% if valid %}
+                    <div class="alert alert-success alert-dismissible" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    Файл прошел валидацию.
+                    </div>
+            {% endif %}
+                <div class="alert alert-success alert-dismissible" role="alert">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    Файл загружен!
+                    </div>
+                <p><a href="{% url "upload" request.user %}">Загрузить новый файл.</a></p>
+          {% endif %}
+
+        <br><br>
+		
+		        <h3 class="text-center">Что нужно знать про теги?</h3>
+				
+		<p>Следующие теги являются плоскими, то есть внутри них не должно быть каких-то других тегов, а может быть только простой текст или число: <code>name</code>, <code>p</code>, <code>extent</code>, <code>author</code>, <code>publisher</code>, <code>editor</code>, <code>edition</code>, <code>translator</code>, <code>pubdate</code>, <code>isbn</code>, <code>iso</code>, <code>text</code>, <code>index</code>, <code>symbol</code>, <code>metalemma</code>, <code>pic</code>, <code>set</code>, <code>quote</code>, <code>hyph</code>, <code>pos</code>, <code>gender</code>, <code>num</code>, <code>per</code>, <code>animat</code>, <code>declen</code>, <code>mood</code>, <code>asp</code>, <code>transit</code>, <code>pron_type</code>, <code>gov</code>, <code>iType</code>, <code>case</code>, <code>tns</code>, <code>paradigm</code>.</p>
+
+		 <br>
+		 
+        <h3 class="text-center">Как валидируется словарь?</h3>
+
+        <p>Для валидации используется файл XSD (XML Schema Definition), в котором прописано, какие тэги разрешены, как они могут быть вложены, какие атрибуты разрешены и какие у них могут быть значения. Здесь вы можете посмотреть на файл, по которому мы проверяем словари: <code><a target="_blank" href="https://gist.github.com/elmiram/33ec69ae043967fed4bb135c7af89864">scheme.xsd</a></code></p>.
+
+        <p>Вы также можете предварительно на своем компьютере проверить, проходит ли ваш файл валидацию. Для этого нужно:<p>
+            <ol>
+            <li>Скачать код <code><a target="_blank" href="https://gist.github.com/elmiram/58eba8dc3a1e23753ef2c6fac45086cc">validate.py</a></code> и схему <code><a target="_blank" href="https://gist.github.com/elmiram/33ec69ae043967fed4bb135c7af89864">scheme.xsd</a></code>; </li>
+            <li>Прописать в коде путь к схеме и путь к файлу со словарем;</li>
+            <li>Запустить и посмотреть результат.</li>
+        </ol>
+
+ <br>
+
+        <h3 class="text-center">Где найти шаблон?</h3>
+        <p>Описание структуры словаря можно найти в файле <a target="_blank" href="https://docs.google.com/spreadsheets/d/1VOcDUqM16MkZQngB47oh23eYHDomitiPnNkTpDBTDos/edit#gid=907384933">TEI-шаблон</a> на листе "Block Structure". Там описаны все блоки и тэги, которые разрешены внутри этих блоков. Свободные тэги разрешены почти в любом блоке. </p>
+
+            <p>Более строго все описано в схеме <code><a target="_blank" href="https://gist.github.com/elmiram/33ec69ae043967fed4bb135c7af89864">scheme.xsd</a></code>. Например:</p>
+        <ul>
+            <li><code>xs:element name="..."</code> указывает на тэг</li>
+            <li><code>xs:element ref="..."</code> указывает все тэги, которые разрешены внутри соответствующего <code>xs:element name="..."</code></li>
+        </ul>
+<br><br>
+        </div>
+    </div>
+
+
+
+
+	</div>
+{% endblock %}

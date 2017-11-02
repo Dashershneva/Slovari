@@ -1,0 +1,32 @@
+{% extends '_base_basic.html' %}
+{% load static %}
+
+{% block headers %}
+	{{ block.super }}
+
+{% endblock %}
+
+{% block body %}
+	<div class="rate-container">
+    <div class="col-sm-offset-2 col-sm-8">
+
+
+		<h3 class="text-center">Вход для зарегистрированных пользователей</h3>
+
+		<div class="text-danger invalid_login">{% if form.errors %}Неверное имя пользователя или пароль{% endif %}</div>
+
+		<form method="post" action="{% url 'login' %}" class="login_form" role="form">
+			{% csrf_token %}
+			<input type="hidden" name="next" value="{{ next }}">
+
+			<div class="form-group">
+				<input type="text" name="username" class="form-control" placeholder="Имя пользователя" required autofocus>
+				<input type="password" name="password" class="form-control" placeholder="Пароль" required>
+			</div>
+
+			<button class="btn btn-lg btn-primary btn-block" type="submit">Войти</button>
+    		<a class="btn btn-sm btn-info btn-block" href="{% url "password_reset_recover" %}">Забыли пароль?</a>
+		</form>
+    </div>
+	</div>
+{% endblock %}
