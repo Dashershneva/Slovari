@@ -38,6 +38,15 @@
 .extended_search {
 	margin-left: 81%;
 }
+.extended_searchbar {
+	background-color: #F8E0E6;
+	padding: 10px;
+	border-radius: 7px;
+	height: 600px;
+}
+.search {
+	font-size: 14px;
+}
 
 
 

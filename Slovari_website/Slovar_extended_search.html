@@ -51,6 +51,61 @@
 	  <div class="container" class="col-md-12">
 		<div class="info">
 			<h2>Расширеный поиск</h2>
+		<div class="extended_searchbar">
+		  <div class="col-md-4">
+		  <h4>Часть речи</h4>
+		    <form class="search">
+			  <input type="radio" name="pos" value="verb"> Глагол<br>
+			  <input type="radio" name="pos" value="noun"> Существительное<br>
+			  <input type="radio" name="pos" value="pron"> Местоимение<br>
+			  <input type="radio" name="pos" value="adj"> Прилагательное<br>
+			  <input type="radio" name="pos" value="adv"> Наречие<br>
+			  <input type="radio" name="pos" value="num"> Числительное<br>
+			  <input type="radio" name="pos" value="ptcl"> Частица<br>
+			  <input type="radio" name="pos" value="prep"> Предлог<br>
+			  <input type="radio" name="pos" value="inj"> Междометие
+			</form>
+		  <h4>Грамматические признаки</h4>
+		  <h5>Род</h5>
+		    <form class="search">
+			  <input type="checkbox" name="gender" value="male"> Мужской<br>
+			  <input type="checkbox" name="gender" value="female"> Женский<br>
+			  <input type="checkbox" name="gender" value="neut"> Средний<br>
+			  <input type="checkbox" name="gender" value="both"> Общий
+			</form>
+		  <h5>Число</h5>
+		    <form class="search">
+			  <input type="checkbox" name="number" value="sgtnt"> Singularia tantum<br>
+			  <input type="checkbox" name="number" value="pltnt"> Pluralia tantum
+			</form>
+		  <h5>Вид</h5>
+		    <form class="search">
+			  <input type="checkbox" name="mode" value="perfect"> Свершенный<br>
+			  <input type="checkbox" name="mode" value="imperfect"> Несовершенный
+			</form>
+		  </div>
+		  <div class="col-md-4">
+		  <h4>Стилистические пометы</h4>
+		    <form class="search">
+			  <input type="checkbox" name="style" value=""> Общеупотребительное<br>
+			  <input type="checkbox" name="style" value=""> Разговорное<br>
+			  <input type="checkbox" name="style" value=""> Грубое<br>
+			  <input type="checkbox" name="style" value=""> Просторечное
+			</form>
+		  <h4>Заимствования</h4>
+		  </div>
+		  <div class="col-md-4">
+		  <h4>Словари</h4>
+		    <form class="search">
+			  <input type="radio" name="dict" value="all" checked> Все словари<br>
+			  <input type="checkbox" name="dict" value=""> Словарь Даля<br>
+			  <input type="checkbox" name="dict" value=""> Словарь синонимов<br>
+			  <input type="checkbox" name="dict" value=""> <br>
+			  <input type="checkbox" name="dict" value=""> <br>
+			</form>
+		  </div>
+	    </div>
+		<button type="submit" class="btn" style="float: right; margin-top: 5px;">Найти</button>
 		</div>
 	  </div>
 	  
