@@ -1,4 +1,6 @@
 function validateForm() {
     var x = document.forms["search-form"]["search-item"].value;
-	alert(document.getElementsByName('search-item-value').innerText = "Привет");
+	var element = document.querySelector('.search-item-value');
+	element.innerHTML = "Результаты поиска: " + x;
+	return false;
 }
