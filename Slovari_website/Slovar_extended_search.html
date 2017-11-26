@@ -93,16 +93,40 @@
 			  <input type="checkbox" name="style" value=""> Просторечное
 			</form>
 		  <h4>Заимствования</h4>
+		    <form class="search">
+			  <input type="checkbox" name="borrowed" value="rus"> исконно русское<br>
+			  <input type="checkbox" name="borrowed" value="eng"> английское<br>
+			  <input type="checkbox" name="borrowed" value="fra"> французское<br>
+			  <input type="checkbox" name="borrowed" value="spa"> испанское<br>
+			  <input type="checkbox" name="borrowed" value="ita"> итальянское<br>
+			  <input type="checkbox" name="borrowed" value="lat"> латинское<br>
+			  <input type="checkbox" name="borrowed" value="grk"> греческое<br>
+			</form>
 		  </div>
 		  <div class="col-md-4">
 		  <h4>Словари</h4>
 		    <form class="search">
-			  <input type="radio" name="dict" value="all" checked> Все словари<br>
-			  <input type="checkbox" name="dict" value=""> Словарь Даля<br>
-			  <input type="checkbox" name="dict" value=""> Словарь синонимов<br>
-			  <input type="checkbox" name="dict" value=""> <br>
-			  <input type="checkbox" name="dict" value=""> <br>
+			  <input type="radio" name="dict" value="all_dict"> Все словари<br>
 			</form>
+		    <h4>Толковые</h4>
+		      <form class="search">
+			    <input type="checkbox" name="dict" value="mas"> Малый академический словарь<br>
+			    <input type="checkbox" name="dict" value="kuznetsov"> Толковый словарь Кузнецова<br>
+			    <input type="checkbox" name="dict" value="bes"> Большой энциклопедический словарь<br>
+				<input type="checkbox" name="dict" value="dal"> Словарь Даля<br>
+			  </form>
+			<h4>Профессиональные</h4>
+		      <form class="search">
+			    <input type="checkbox" name="dict" value="psyho"> Словарь психологических терминов<br>
+			  </form>
+			<h4>Специализированные</h4>
+		      <form class="search">
+			    <input type="checkbox" name="dict" value="synonym"> Словарь синонимов<br>
+			    <input type="checkbox" name="dict" value="antonym"> Словарь антонимов<br>
+				<input type="checkbox" name="dict" value="wrongs"> Словарь неправильностей русского языка<br>
+				<input type="checkbox" name="dict" value="morph"> Морфемно-орфографический словарь<br>
+			    <input type="checkbox" name="dict" value="ancient"> Словарь древнерусского языка<br>
+			  </form>
 		  </div>
 	    </div>
 		<button type="submit" class="btn" style="float: right; margin-top: 5px;">Найти</button>
