@@ -9,9 +9,9 @@
         <title>Словари</title>
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="apple-touch-icon" href="apple-touch-icon.png">
-
-        <link rel="stylesheet" href="bootstrap.min.css">
+		<link rel="apple-touch-icon" href="apple-touch-icon.png">
+		
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
         <style>
             body {
                 padding-top: 50px;
@@ -19,9 +19,10 @@
             }
         </style>
         <!-- <link rel="stylesheet" href="bootstrap-theme.min.css"> -->
-        <link rel="stylesheet" href="main.css">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
 
-        <!-- <script src="js/vendor/modernizr-2.8.3-respond-1.4.2.min.js"></script> -->
+		<script src="{{ url_for('static', filename='js/vendor/modernizr-2.8.3-respond-1.4.2.min.js') }}"></script>
+		<script src="{{ url_for('static', filename='js/main.js') }}"></script>
     </head>
     <body>
         <!--[if lt IE 8]>
@@ -37,12 +38,12 @@
             <span class="icon-bar"></span>
           </button>
           <a class="navbar-brand" href="#">Вышка.Словари</a>
-		  <a class="navbar-brand" href="Slovar_about.html">О проекте</a>
+		  <a class="navbar-brand" href="Vyshka_slovari_about">О проекте</a>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <form class="navbar-form navbar-right" role="form">
-            <button type="submit" class="btn btn-success"><a href="Slovar_enter.html" style="color:white">Войти</a></button>
-			<button type="submit" class="btn btn-success"><a href="Slovar_register.html" style="color:white">Регистрация</a></button>
+            <button type="submit" class="btn btn-success"><a href="Vyshka_slovari_enter" style="color:white">Войти</a></button>
+			<button type="submit" class="btn btn-success"><a href="Vyshka_slovari_register" style="color:white">Регистрация</a></button>
           </form>
         </div><!--/.navbar-collapse -->
       </div>
@@ -60,7 +61,7 @@
             <input name="search-item" type="text" placeholder="Введите слово" class="searchfield" style="color:black">
 			<button type="submit" class="btn searchbar-find">Найти</button>
 			<br>
-			<a class="extended_search" href="Slovar_extended_search.html">Расширенный поиск</a>
+			<a class="extended_search" href="Vyshka_slovari_extended_search">Расширенный поиск</a>
 	      </div>
           </form>
 	    </div>
@@ -74,15 +75,10 @@
       <hr>
 
 	<div>
+
       <footer>
         <p>&copy; ВШЭ 2017</p>
       </footer>
-    </div> <!-- /container -->        <!--<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script> -->
-        <!--<script>window.jQuery || document.write('<script src="js/vendor/jquery-1.11.2.min.js"><\/script>')</script> -->
-
-       <!--<script src="js/vendor/bootstrap.min.js"></script> -->
-
-        <script src="main.js"></script>
-
+    </div>
     </body>
 </html>
