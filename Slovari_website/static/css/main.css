@@ -42,7 +42,12 @@
 	background-color: #F8E0E6;
 	padding: 10px;
 	border-radius: 7px;
-	height: 600px;
+}
+.card {
+	background-color: #F8E0E6;
+	padding: 10px;
+	border-radius: 7px;
+	margin: 10px;
 }
 .search {
 	font-size: 14px;

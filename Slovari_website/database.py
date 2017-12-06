@@ -4,7 +4,7 @@ from flask import g
 
 app = Flask(__name__)
 
-DATABASE = 'YOUR_PATH_TO_DB'
+DATABASE = 'slovari.db'
 
 @app.before_request
 def before_request():

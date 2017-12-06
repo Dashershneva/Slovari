@@ -1,0 +1,33 @@
+{%extends "Slovar_main.html"%}
+
+{% block content %}
+	{% if meaning1 or meaning2 %}
+		<div class="col-md-6 card row">
+			<h3>Значение:</h3>
+	
+	{% if meaning1 %}
+		<p>{{ meaning1 }}</p>
+	{% endif %}
+	{% if meaning2 %}
+		<p>{{ meaning2 }}</p>
+	{% endif %}
+		</div>
+	{% endif %}
+	{% if antonyms or synonyms %}
+	<div class="col-md-6">
+	{% if antonyms %}
+		<div class="card row">
+			<h3>Антонимы:</h3>
+			<p>{{ antonyms }}</p>
+		</div>
+	{% endif %}
+	{% if synonyms %}
+		<div class="card row">
+			<h3>Синонимы:</h3>
+			<p>{{ synonyms }}</p>
+		</div>
+	{% endif %}
+	</div>
+	{% endif %}
+
+{% endblock %}
