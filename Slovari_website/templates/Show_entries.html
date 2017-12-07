@@ -1,15 +1,18 @@
 {%extends "Slovar_main.html"%}
 
 {% block content %}
-	{% if meaning1 or meaning2 %}
+	{% if meaning1 or meaning2 or part_of_speech or gender or aspect or govern %}
 		<div class="col-md-6">
 			<div class="card">
 				<h3>Значение:</h3>
 				{% if meaning2 %}
 					{% for meaning in meaning2 %}
-						<p class="card">{{ meaning }}</p>
+						<p>{{ meaning[0] }}</p>
 					{% endfor %}
+						<p style="float:right;">{{ meaning2[0][1] }}</p>
 				{% endif %}
+				<br>
+				<br>
 				{% if meaning1 %}
 					{% for meaning in meaning1 %}
 						<p>{{ meaning }}</p>
