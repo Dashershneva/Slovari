@@ -11,7 +11,7 @@ DATABASE = 'C:\\Users\\dsher\\PycharmProjects\\Tests\\slovari.db'
 def before_request():
     g.db = sqlite3.connect(DATABASE)
 
-@app.route("/Vyshka_slovari_main")
+@app.route("/Vyshka_slovari_main", methods=['POST', 'GET'])
 def main_page():
     return render_template("Slovar_main.html")
 
