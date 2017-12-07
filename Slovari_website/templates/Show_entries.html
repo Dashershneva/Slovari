@@ -6,15 +6,36 @@
 			<div class="card">
 				<h3>Значение:</h3>
 				{% if meaning2 %}
-					<p class="card">{{ meaning2 }}</p>
+					{% for meaning in meaning2 %}
+						<p class="card">{{ meaning }}</p>
+					{% endfor %}
 				{% endif %}
 				{% if meaning1 %}
-					<p>{{ meaning1 }}</p>
+					{% for meaning in meaning1 %}
+						<p>{{ meaning }}</p>
+					{% endfor %}
 				{% endif %}
 			</div>
+			{% if part_of_speech or gender or aspect or govern %}
+				<div class="card">
+					<h3>Грамматическая информация:</h3>
+					{% if part_of_speech %}
+						<p> Часть речи: {{ part_of_speech }}</p>
+					{% endif %}
+					{% if gender %}
+						<p> Род: {{ gender }}</p>
+					{% endif %}
+					{% if aspect %}
+						<p> Вид: {{ aspect }}</p>
+					{% endif %}
+					{% if govern %}
+						<p> Управление: {{ govern }}</p>
+					{% endif %}
+				</div>
+			{% endif %}
 		</div>
 	{% endif %}
-	{% if antonyms or synonyms %}
+	{% if antonyms or synonyms or epithets or stress %}
 		<div class="col-md-6">
 		{% if antonyms %}
 			<div class="card">
@@ -26,6 +47,24 @@
 			<div class="card">
 				<h3>Синонимы:</h3>
 				<p>{{ synonyms }}</p>
+			</div>
+		{% endif %}
+		{% if epithets %}
+			<div class="card">
+				<h3>Эпитеты:</h3>
+				<p>{{ epithets }}</p>
+			</div>
+		{% endif %}
+		{% if stress %}
+			<div class="card">
+				<h3>Ударение:</h3>
+				<p>{{ stress }}</p>
+			</div>
+		{% endif %}
+		{% if etymology %}
+			<div class="card">
+				<h3>Этимология:</h3>
+				<p>{{ etymology }}</p>
 			</div>
 		{% endif %}
 		</div>
