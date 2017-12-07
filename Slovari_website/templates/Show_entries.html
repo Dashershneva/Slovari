@@ -5,34 +5,54 @@
 		<div class="col-md-6">
 			<div class="card">
 				<h3>Значение:</h3>
-				{% if meaning2 %}
+				{% if meaning2 and meaning1 %}
+					{% for meaning in meaning2 %}
+						<p>{{ meaning[0] }}</p>
+					{% endfor %}
+					<p style="float:right;">{{ meaning2[0][1] }}</p>
+					<br>
+					<a id="examples" href="#" onclick="toggle(more_examples)">Значения в других словарях</a>
+					<div id="more_examples" style="display:none">
+					<script>
+						function toggle(el) {
+							el.style.display = (el.style.display == 'none') ? '' : 'none'
+							}
+					</script>
+
+						<br>
+					{% for meaning in meaning1 %}
+						<p>{{ meaning[0] }}</p>
+					{% endfor %}
+						<p style="float:right;">{{ meaning1[0][1] }}</p>
+					</div>		
+				{% elif meaning2 %}
 					{% for meaning in meaning2 %}
 						<p>{{ meaning[0] }}</p>
 					{% endfor %}
 						<p style="float:right;">{{ meaning2[0][1] }}</p>
-				{% endif %}
 				<br>
-				<br>
-				{% if meaning1 %}
+				{% elif meaning1 %}
 					{% for meaning in meaning1 %}
-						<p>{{ meaning }}</p>
+						<p>{{ meaning[0] }}</p>
 					{% endfor %}
+						<p style="float:right;">{{ meaning1[0][1] }}</p>		
 				{% endif %}
+				<br>
 			</div>
 			{% if part_of_speech or gender or aspect or govern %}
 				<div class="card">
 					<h3>Грамматическая информация:</h3>
 					{% if part_of_speech %}
-						<p> Часть речи: {{ part_of_speech }}</p>
+						<p> Часть речи: {{ part_of_speech[0] }}</p>
 					{% endif %}
 					{% if gender %}
-						<p> Род: {{ gender }}</p>
+						<p> Род: {{ gender[0] }}</p>
 					{% endif %}
 					{% if aspect %}
-						<p> Вид: {{ aspect }}</p>
+						<p> Вид: {{ aspect[0] }}</p>
 					{% endif %}
 					{% if govern %}
-						<p> Управление: {{ govern }}</p>
+						<p> Управление: {{ govern[0] }}</p>
 					{% endif %}
 				</div>
 			{% endif %}
@@ -43,31 +63,41 @@
 		{% if antonyms %}
 			<div class="card">
 				<h3>Антонимы:</h3>
-				<p>{{ antonyms }}</p>
+				<p>{{ antonyms[0] }}</p>
+				<p style="float:right;">{{ antonyms[1] }}</p>
+				<br>
 			</div>
 		{% endif %}
 		{% if synonyms %}
 			<div class="card">
 				<h3>Синонимы:</h3>
-				<p>{{ synonyms }}</p>
+				<p>{{ synonyms[0] }}</p>
+				<p style="float:right;">{{ synonyms[1] }}</p>
+				<br>
 			</div>
 		{% endif %}
 		{% if epithets %}
 			<div class="card">
 				<h3>Эпитеты:</h3>
-				<p>{{ epithets }}</p>
+				<p>{{ epithets[0] }}</p>
+				<p style="float:right;">{{ epithets[1] }}</p>
+				<br>
 			</div>
 		{% endif %}
 		{% if stress %}
 			<div class="card">
 				<h3>Ударение:</h3>
-				<p>{{ stress }}</p>
+				<p>{{ stress[0] }}</p>
+				<p style="float:right;">{{ stress[1] }}</p>
+				<br>
 			</div>
 		{% endif %}
 		{% if etymology %}
 			<div class="card">
 				<h3>Этимология:</h3>
-				<p>{{ etymology }}</p>
+				<p>{{ etymology[0] }}</p>
+				<p style="float:right;">{{ etymology[1] }}</p>
+				<br>
 			</div>
 		{% endif %}
 		</div>
