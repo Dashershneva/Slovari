@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from flask import Flask, request, json, Response, render_template_string, abort, render_template, jsonify, g
+from flask import Flask, request, json, Response, render_template_string, abort, render_template, jsonify, g, url_for
 import sqlite3
 
 app = Flask(__name__)
@@ -33,9 +33,9 @@ def before_request():
 def main_page():
     return render_template("Slovar_main.html")
 
-
-@app.route('/Vyshka_slovari_main/<word>')
+@app.route('/Vyshka_slovari_main/<word>', methods=['POST', 'GET'])
 def show_entries(word):
+    word = word.lower()
     mng1 = g.db.execute(
         "SELECT sense, dic_name FROM test WHERE orth='%s' AND dic_name='Большой Энциклопедический Словарь'" % word).fetchall()
     mng2 = g.db.execute(
@@ -70,6 +70,7 @@ def show_entries(word):
     gov = handle_gram(gov)
 
     return render_template('Show_entries.html',
+                           word=word,
                            synonyms=syn,
                            antonyms=ant,
                            epithets=epith,
@@ -81,7 +82,6 @@ def show_entries(word):
                            govern=gov,
                            meaning1=mng1,
                            meaning2=mng2)
-
 
 @app.route("/Vyshka_slovari_about")
 def about_page():

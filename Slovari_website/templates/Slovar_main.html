@@ -54,10 +54,9 @@
       <div class="container">
           <h2>Добро пожаловать на Вышка.Словари</h2>
           <p> Найдите информацию о нужном вам слове в один клик</p>
-	    <div class="searchbar row">
-          <form name="search-form" role="form" onsubmit="return validateForm()" method="post">
-	      <h4 class="searchbar-text">Поиск по словарям</h4>
-          <div class="form-group">
+		<form name="search-form" role="form" onsubmit="return validateForm()" method="post">
+	      <div class="searchbar row">
+	        <h4 class="searchbar-text">Поиск по словарям</h4>
 		    <div class="col-md-11">
               <input name="search-item" type="text" placeholder="Введите слово" class="searchfield" style="color:black">
 			  <br>
@@ -65,16 +64,20 @@
 			  <br>
 			</div>
 			<div class="col-md-1" style="width: 30px;">
-			  <a type="submit" class="btn searchbar-find">Найти</a>
+			  <a type="submit" href="javascript: goToPage();" class="btn searchbar-find">Найти</a>
+			  <script type= "text/javascript">
+			    function goToPage() {
+				  var url = document.forms["search-form"]["search-item"].value;
+				  document.location.href = "/Vyshka_slovari_main/" + url;
+				}
+			  </script>
 			</div>
-	      </div>
-          </form>
-	    </div>
+		  </div>
+        </form>
 	  </div>
     </div>
 	
 	<div class="container search-value">
-	  <h2 class="search-item-value"></h2>
 	  {% block content %}{% endblock %}
 	</div>
 

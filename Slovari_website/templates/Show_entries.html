@@ -1,6 +1,7 @@
 {%extends "Slovar_main.html"%}
 
 {% block content %}
+	<h2>Результаты поиска: {{ word }}</h2>
 	{% if meaning1 or meaning2 or part_of_speech or gender or aspect or govern %}
 		<div class="col-md-6">
 			<div class="card">
