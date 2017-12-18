@@ -1,9 +1,13 @@
 # -*- coding: utf-8 -*-
 
 from flask import Flask, request, json, Response, render_template_string, abort, render_template, jsonify, g, url_for
+from flask_wtf import Form
+from wtforms import StringField, PasswordField, SelectField, SelectMultipleField, BooleanField, RadioField
+from wtforms.validators import InputRequired
 import sqlite3
 
 app = Flask(__name__)
+app.config['SECRET_KEY'] = 'Do not tell anyone'
 
 DATABASE = 'C:/Users/dsher/PycharmProjects/Tests/slovari.db'
 
@@ -12,7 +16,7 @@ def handle_exception(val):
     try:
         val = val[0]
     except:
-        val = "Пока не знаю)"
+        val = ["Пока не знаю)"]
     return val
 
 
@@ -22,6 +26,18 @@ def handle_gram(val):
     except:
         pass
     return val
+
+#extended search fields names
+pos_labels = [(' сущ. ','Существительное'),(' глаг. ','Глагол'), (' мест. нареч. ','Местоименное наречие'),(' прил. ','Прилагательное'),
+             (' нареч. ', 'Наречие'), (' числ. ', 'Числительное'), (' част. ','Частица'),(' предлог ','Предлог'), (' межд. ','Междометие')]
+gender_labels = [(' ж. ','Женский'), (' м. ','Мужской'), (' ср. ','Средний')]
+aspect_labels = [(' св. ','Совершенный'), (' нсв. ','Несовершенный')]
+
+#defining form fields for extended search
+class MyForm(Form):
+    noun_field = RadioField('POS', choices=pos_labels)
+    gender_field = RadioField('GENDER', choices=gender_labels)
+    aspect_field = RadioField('ASPECT', choices=aspect_labels)
 
 
 @app.before_request
@@ -88,10 +104,25 @@ def about_page():
     return render_template('Slovar_about.html')
 
 
-@app.route("/Vyshka_slovari_extended_search")
+@app.route("/Vyshka_slovari_extended_search", methods=['POST', 'GET'])
 def extended_search_page():
-    return render_template('Slovar_extended_search.html')
+    form = MyForm()
+    if form.is_submitted():
+        pos = form.noun_field.data
+        gender = form.gender_field.data
+        aspect = form.aspect_field.data
+        print(pos,gender,aspect)
+        result = ["По Вашему запросу ничего не найдено :("]
+        if pos != 'None' and aspect == 'None' and gender == 'None':
+            result = g.db.execute("SELECT * FROM test WHERE pos='%s'" %pos).fetchall()
+        if gender != None and pos != None and aspect == 'None':
+            result = g.db.execute("SELECT * FROM test WHERE gender='%s' AND pos='%s'" %(gender, pos)).fetchall()
+        if pos == ' глаг. ' and aspect != None and gender == 'None':
+            result = g.db.execute("SELECT * FROM test WHERE pos=' глаг. ' AND asp='%s'" %aspect).fetchall()
 
+        print(result)
+        return render_template('Show_extended_entries.html', form=form, result=result)
+    return render_template('Slovar_extended_search.html', form=form)
 
 @app.route("/Vyshka_slovari_enter")
 def enter_page():

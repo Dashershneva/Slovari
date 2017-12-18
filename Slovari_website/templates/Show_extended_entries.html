@@ -1,0 +1,9 @@
+{%extends "Slovar_extended_search.html"%}
+
+{% block extended %}
+	<h2>Результаты поиска:</h2>
+	{% for res in result%}
+		<p>{{ res }}</p>
+	{% endfor %}
+
+{% endblock %}
