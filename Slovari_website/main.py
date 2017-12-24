@@ -9,16 +9,17 @@ import sqlite3
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'Do not tell anyone'
 
-DATABASE = 'C:/Users/dsher/PycharmProjects/Tests/slovari.db'
+DATABASE = 'C:/Users/dsher/Downloads/slovari.db'
 
 
 def handle_exception(val):
-    try:
-        val = val[0]
-    except:
-        val = ["Пока не знаю)"]
-    return val
-
+    val_new = [("пока не знаю)", "—")]
+    if val == []:
+        return val_new
+    if val[0][0] == None:
+        return val_new
+    if val[0][0] != None:
+        return val
 
 def handle_gram(val):
     try:
@@ -55,7 +56,7 @@ def show_entries(word):
     mng1 = g.db.execute(
         "SELECT sense, dic_name FROM test WHERE orth='%s' AND dic_name='Большой Энциклопедический Словарь'" % word).fetchall()
     mng2 = g.db.execute(
-        "SELECT sense, dic_name FROM test WHERE orth='%s' AND dic_name=' \"Толковый словарь Кузнецова\" '" % word).fetchall()
+        "SELECT sense, dic_name FROM test WHERE orth='%s' AND dic_name='Толковый словарь Кузнецова'" % word).fetchall()
     ant = g.db.execute(
         "SELECT ant, dic_name FROM test WHERE orth='%s' AND dic_name='Словарь антонимов'" % word).fetchall()
     syn = g.db.execute(
@@ -63,23 +64,26 @@ def show_entries(word):
     epith = g.db.execute(
         "SELECT epith, dic_name FROM test WHERE orth='%s' AND dic_name=' Словарь эпитетов '" % word).fetchall()
     phon = g.db.execute(
-        "SELECT phon, dic_name FROM test WHERE orth='%s' AND dic_name=' \"Толковый словарь Кузнецова\" '" % word).fetchall()
+        "SELECT phon, dic_name FROM test WHERE orth='%s' AND dic_name='Толковый словарь Кузнецова'" % word).fetchall()
     etym = g.db.execute(
-        "SELECT etym, dic_name FROM test WHERE orth='%s' AND dic_name=' \"Толковый словарь Кузнецова\" '" % word).fetchall()
+        "SELECT etym, dic_name FROM test WHERE orth='%s' AND dic_name='Толковый словарь Кузнецова'" % word).fetchall()
+    usg = g.db.execute(
+        "SELECT usg, dic_name FROM test WHERE orth='%s' AND dic_name='Толковый словарь Кузнецова'" % word).fetchall()
     pos = g.db.execute(
-        "SELECT pos FROM test WHERE orth='%s' AND dic_name=' \"Толковый словарь Кузнецова\" '" % word).fetchall()
+        "SELECT pos FROM test WHERE orth='%s' AND dic_name='Толковый словарь Кузнецова'" % word).fetchall()
     gen = g.db.execute(
-        "SELECT gender FROM test WHERE orth='%s' AND dic_name=' \"Толковый словарь Кузнецова\" '" % word).fetchall()
+        "SELECT gender FROM test WHERE orth='%s' AND dic_name='Толковый словарь Кузнецова'" % word).fetchall()
     asp = g.db.execute(
-        "SELECT asp FROM test WHERE orth='%s' AND dic_name=' \"Толковый словарь Кузнецова\" '" % word).fetchall()
+        "SELECT asp FROM test WHERE orth='%s' AND dic_name='Толковый словарь Кузнецова'" % word).fetchall()
     gov = g.db.execute(
-        "SELECT gov FROM test WHERE orth='%s' AND dic_name=' \"Толковый словарь Кузнецова\" '" % word).fetchall()
+        "SELECT gov FROM test WHERE orth='%s' AND dic_name='Толковый словарь Кузнецова'" % word).fetchall()
 
     ant = handle_exception(ant)
     syn = handle_exception(syn)
     epith = handle_exception(epith)
     phon = handle_exception(phon)
     etym = handle_exception(etym)
+    usg = handle_exception(usg)
     pos = handle_gram(pos)
     gen = handle_gram(gen)
     asp = handle_gram(asp)
@@ -92,6 +96,7 @@ def show_entries(word):
                            epithets=epith,
                            stress=phon,
                            etymology=etym,
+                           usage=usg,
                            part_of_speech=pos,
                            gender=gen,
                            aspect=asp,
@@ -115,12 +120,10 @@ def extended_search_page():
         result = ["По Вашему запросу ничего не найдено :("]
         if pos != 'None' and aspect == 'None' and gender == 'None':
             result = g.db.execute("SELECT * FROM test WHERE pos='%s'" %pos).fetchall()
-        if gender != None and pos != None and aspect == 'None':
+        elif gender != 'None' and pos != "None" and aspect == 'None':
             result = g.db.execute("SELECT * FROM test WHERE gender='%s' AND pos='%s'" %(gender, pos)).fetchall()
-        if pos == ' глаг. ' and aspect != None and gender == 'None':
+        elif pos == ' глаг. ' and aspect != 'None' and gender == 'None':
             result = g.db.execute("SELECT * FROM test WHERE pos=' глаг. ' AND asp='%s'" %aspect).fetchall()
-
-        print(result)
         return render_template('Show_extended_entries.html', form=form, result=result)
     return render_template('Slovar_extended_search.html', form=form)
 
