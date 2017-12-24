@@ -5,6 +5,7 @@ from flask_wtf import Form
 from wtforms import StringField, PasswordField, SelectField, SelectMultipleField, BooleanField, RadioField
 from wtforms.validators import InputRequired
 import sqlite3
+import re
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'Do not tell anyone'
@@ -33,12 +34,18 @@ pos_labels = [(' сущ. ','Существительное'),(' глаг. ','Г�
              (' нареч. ', 'Наречие'), (' числ. ', 'Числительное'), (' част. ','Частица'),(' предлог ','Предлог'), (' межд. ','Междометие')]
 gender_labels = [(' ж. ','Женский'), (' м. ','Мужской'), (' ср. ','Средний')]
 aspect_labels = [(' св. ','Совершенный'), (' нсв. ','Несовершенный')]
+borrowings_labels = [('азерб.','Азербайджанский'),('англ.','Английский'),('голл.','Голландский'),('греч.','Греческий'),('исп.','Испанский'),
+                     ('итал.', 'Итальянский'),('лат.','Латинский'),('нем.','Немецкий'),('норв.','Норвежский'),('перс.','Персидский'),
+                     ('польск.', 'Польский'),('португ.','Португальский'),('румын.','Румынский'),('санкр.','Санскрит'),('сканд.','Скандинавское'),
+                     ('ст.-слав.', 'Старославянский'),('тур.','Турецкий'),('тюрк.','Тюркское'),('узбек.','Узбекский'), ('укр.','Украинский'),
+                     ('фин.', 'Финский'),('фр.','Французский'),('узбек.','Узбекский'),('швед.','Шведский'),('япон.','Японский')]
 
 #defining form fields for extended search
 class MyForm(Form):
     noun_field = RadioField('POS', choices=pos_labels)
     gender_field = RadioField('GENDER', choices=gender_labels)
     aspect_field = RadioField('ASPECT', choices=aspect_labels)
+    borrowings_field = SelectMultipleField('BORROWINGS', choices=borrowings_labels)
 
 
 @app.before_request
@@ -116,14 +123,35 @@ def extended_search_page():
         pos = form.noun_field.data
         gender = form.gender_field.data
         aspect = form.aspect_field.data
-        print(pos,gender,aspect)
+        borrowed = form.borrowings_field.data
+        print(pos,gender,aspect,borrowed)
         result = ["По Вашему запросу ничего не найдено :("]
-        if pos != 'None' and aspect == 'None' and gender == 'None':
-            result = g.db.execute("SELECT * FROM test WHERE pos='%s'" %pos).fetchall()
-        elif gender != 'None' and pos != "None" and aspect == 'None':
-            result = g.db.execute("SELECT * FROM test WHERE gender='%s' AND pos='%s'" %(gender, pos)).fetchall()
-        elif pos == ' глаг. ' and aspect != 'None' and gender == 'None':
-            result = g.db.execute("SELECT * FROM test WHERE pos=' глаг. ' AND asp='%s'" %aspect).fetchall()
+        if pos != 'None':
+            if aspect == 'None' and gender == 'None' and borrowed == []:
+                result = g.db.execute(
+                    "SELECT orth, phon, sense, pos, gender, asp, dic_name, etym_lang FROM test WHERE pos='%s'" %pos).fetchall()
+            elif borrowed != [] and aspect == 'None' and gender == 'None':
+                result = g.db.execute(
+                    "SELECT orth, phon, sense, pos, gender, asp, dic_name, etym_lang FROM test WHERE pos='%s' AND etym_lang='%s'" %(pos,borrowed[0])).fetchall()
+            elif gender != 'None' and aspect == 'None':
+                if borrowed == []:
+                    result = g.db.execute(
+                        "SELECT orth, phon, sense, pos, gender, asp, dic_name, etym_lang FROM test WHERE gender='%s' AND pos='%s'" %(gender, pos)).fetchall()
+                else:
+                    result = g.db.execute(
+                        "SELECT orth, phon, sense, pos, gender, asp, dic_name, etym_lang FROM test WHERE gender='%s' AND pos='%s' AND etym_lang='%s'" % (
+                        gender,pos,borrowed[0])).fetchall()
+            elif aspect != 'None' and gender == 'None':
+                if borrowed==[]:
+                    result = g.db.execute(
+                        "SELECT orth, phon, sense, pos, gender, asp, dic_name, etym_lang FROM test WHERE pos=' глаг. ' AND asp='%s'" %aspect).fetchall()
+                else:
+                    result = g.db.execute(
+                        "SELECT orth, phon, sense, pos, gender, asp, dic_name, etym_lang FROM test WHERE pos=' глаг. ' AND asp='%s' AND etym_lang='%s'" % (
+                        aspect,borrowed[0])).fetchall()
+        elif borrowed != [] and pos=='None' and gender=='None' and aspect == 'None':
+            result = g.db.execute(
+                "SELECT orth, phon, sense, pos, gender, asp, dic_name, etym_lang FROM test WHERE etym_lang='%s'" %borrowed[0]).fetchall()
         return render_template('Show_extended_entries.html', form=form, result=result)
     return render_template('Slovar_extended_search.html', form=form)
 
