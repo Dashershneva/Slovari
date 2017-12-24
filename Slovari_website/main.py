@@ -1,14 +1,21 @@
 # -*- coding: utf-8 -*-
 
-from flask import Flask, request, json, Response, render_template_string, abort, render_template, jsonify, g, url_for
+from flask import Flask, request, json, Response, render_template_string, abort, render_template, jsonify, g, url_for, send_from_directory
 from flask_wtf import Form
 from wtforms import StringField, PasswordField, SelectField, SelectMultipleField, BooleanField, RadioField
 from wtforms.validators import InputRequired
+from werkzeug.utils import secure_filename
 import sqlite3
 import re
+import csv
+import os
+
+UPLOAD_FOLDER = 'csv_result'
+ALLOWED_EXTENSIONS = set(['csv'])
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'Do not tell anyone'
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 DATABASE = 'C:/Users/dsher/Downloads/slovari.db'
 
@@ -132,6 +139,10 @@ def show_entries(word):
 def about_page():
     return render_template('Slovar_about.html')
 
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
+
 
 @app.route("/Vyshka_slovari_extended_search", methods=['POST', 'GET'])
 def extended_search_page():
@@ -204,8 +215,22 @@ def extended_search_page():
             result = g.db.execute(
                 "SELECT orth, phon, sense, pos, gender, asp, dic_name, usg, etym_lang FROM test WHERE usg='%s'" %
                 marker[0]).fetchall()
+        with open('csv_result/results.csv', 'w', newline='', encoding='utf-8') as csvfile:
+            fieldnames = ['orth', 'phon', 'sense', 'pos', 'gender', 'asp', 'dic_name', 'usg', 'etym_lang']
+            filewriter = csv.DictWriter(csvfile, delimiter=' ', fieldnames=fieldnames)
+            filewriter.writeheader()
+            for item in result:
+                filewriter.writerow({'orth':str(item[0]), 'phon':str(item[1]), 'sense':str(item[2]), 'pos':str(item[3]),
+                                     'gender':str(item[4]), 'asp':str(item[5]), 'dic_name':str(item[6]),
+                                     'usg':str(item[7]), 'etym_lang':str(item[8])})
+        csvfile.close()
+        print(type(result))
         return render_template('Show_extended_entries.html', form=form, result=result)
     return render_template('Slovar_extended_search.html', form=form)
+
+@app.route('/csv_result/results.csv')
+def download():
+    return send_from_directory('csv_result/', "results.csv")
 
 @app.route("/Vyshka_slovari_enter")
 def enter_page():

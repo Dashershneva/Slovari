@@ -2,8 +2,24 @@
 
 {% block extended %}
 	<h2>Результаты поиска:</h2>
+	<form method="POST" enctype="multipart/form-data">
+		<a href="{{ url_for('download', filename=filename) }}">Скачать результаты (csv)</a>
+	</form>
+	<br>
 	{% for res in result%}
-		<p>{{ res }}</p>
+		<table class='extended_table'>
+			<tr>
+				<td>{{ res[0] }}</td>
+				<td>{{ res[1] }}</td>
+				<td>{{ res[2] }}</td>
+				<td>{{ res[3] }}</td>
+				<td>{{ res[4] }}</td>
+				<td>{{ res[5] }}</td>
+				<td>{{ res[6] }}</td>
+				<td>{{ res[7] }}</td>
+				<td>{{ res[8] }}</td>
+			</tr>
+		</table>	
 	{% endfor %}
 
 {% endblock %}
