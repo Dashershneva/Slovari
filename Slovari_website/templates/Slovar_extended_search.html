@@ -61,11 +61,13 @@
 		    </div>
 		    <div class="col-md-4">
 			  <h4>Стилистические пометы</h4>
-			  <h5>Заимствования</h5>
+			  <p class='searchbar-text'>{{ form.marker_field }}</p>
+			  <h4>Заимствования</h4>
 			  <p class='searchbar-text'>{{ form.borrowings_field }}</p>
 		    </div>  
 		    <div class="col-md-4">
 			  <h4>Словари</h4>
+			  <p class='searchbar-text'>{{ form.dict_field }}</p>
 		    </div>
 		  </div>
 		  <input class="btn" type="submit" value="Найти" style="float:right; margin-top: 5px;">
@@ -80,7 +82,7 @@
 		<hr>
 
       <footer>
-        <p>&copy; ВШЭ 2017</p>
+
       </footer>
     </div>
     </body>
