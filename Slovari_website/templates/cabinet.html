@@ -37,28 +37,27 @@
             <span class="icon-bar"></span>
           </button>
           <a class="navbar-brand" href="Vyshka_slovari_main">Вышка.Словари</a>
-		  <a class="navbar-brand" href="#">О проекте</a>
+		  <a class="navbar-brand" href="Vyshka_slovari_about">О проекте</a>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           {% include 'register.html' %}
         </div><!--/.navbar-collapse -->
       </div>
     </nav>
-
+	  
 	  <div class="container" class="col-md-12">
-		<div class="info">
-			<h2>О проекте</h2>
-		  	<p> Вышка.Словари - это агрегатор словарей.</p>
-			<h3>Участники проекта</h3>
-			<ul style="list-style-type:disc">
-			  <li>Даниил Грачев</li>
-			  <li>Варвара Гуц</li>
-        <li>Марк Мальцев</li>
-			  <li>Сергей Михайлов</li>
-			  <li>Эльмира Мустакимова</li>
-        <li>Дарья Шершнева</li>
-			</ul>
-		</div>
+        <h2>{{ current_user.firstname }} {{ current_user.lastname }}</h2>
+        <h3>{{ current_user.email }}</h3>
+      
+	      <div class="info">
+        <h2>Загрузить словарь</h2>
+        
+        <form action="/upload_slov"  enctype="multipart/form-data" method="POST">
+          <input type="file" name="file">
+          <input id="post_btn" type="submit" name="upload_slov" value="Загрузить словарь">
+          </form>
+           
+		  </div>
 	  </div>
 	  
 	  <hr>

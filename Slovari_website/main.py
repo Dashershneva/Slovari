@@ -1,14 +1,16 @@
 # -*- coding: utf-8 -*-
 
-from flask import Flask, request, json, Response, render_template_string, abort, render_template, jsonify, g, url_for, send_from_directory
+from flask import Flask, request, json, Response, render_template_string, abort, render_template, jsonify, g, url_for, redirect, send_from_directory
 from flask_wtf import Form
 from wtforms import StringField, PasswordField, SelectField, SelectMultipleField, BooleanField, RadioField
 from wtforms.validators import InputRequired
-from werkzeug.utils import secure_filename
 import sqlite3
 import re
-import csv
 import os
+import csv
+from flask_login import LoginManager, current_user, login_required, login_user, logout_user, LoginManager, UserMixin
+from werkzeug import secure_filename
+import shutil
 
 UPLOAD_FOLDER = 'csv_result'
 ALLOWED_EXTENSIONS = set(['csv'])
@@ -18,6 +20,17 @@ app.config['SECRET_KEY'] = 'Do not tell anyone'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 DATABASE = 'C:/Users/dsher/Downloads/slovari.db'
+
+
+@login_manager.user_loader
+def load_user(userid):
+    from models import User
+    f = open('users.csv', 'r', encoding='utf8').read().split('\n')
+    for line in f:
+        line = line.split(';')
+        uid = int(line[0])
+        print(uid)
+    return uid
 
 
 def handle_exception(val):
@@ -72,9 +85,73 @@ class MyForm(Form):
     marker_field = SelectMultipleField('MARKERS', choices=marker_labels)
 
 
+class User(UserMixin):
+    def __init__(self, email, uid, firstname, lastname, active=True):
+        self.firstname = firstname
+        self.lastname = lastname
+        self.email = email
+        self.id = uid
+        self.active = active
+        
+
+    def is_authenticated():
+        return True
+
+    def is_active():
+        return True
+
+    def is_anonymous():
+        return False
+
+    def get_id(self):
+        return self.id
+
+
+
+@login_manager.user_loader
+def load_user(user_id):
+
+    user_id = str(user_id)
+    uid, firstname, lastname, email = '', '', '', ''
+
+    f = open('users.csv', 'r', encoding='utf8').read().split('\n')
+    for line in f:
+        line = line.split(';')
+        if line[0] == user_id:
+            uid = line[0]
+            firstname = line[1]
+            lastname = line[2]
+            email = line[3]
+            active = True
+            break
+
+    if uid == '':
+        print('no such user')
+        return None
+    else:
+        print('%s %s'%(firstname, lastname))
+        return User(email, uid, firstname, lastname, active)
+
+
+@app.before_first_request
+def before_first_request():
+    ld = os.listdir(os.getcwd())
+    if 'users.csv' not in ld:
+        f = open('users.csv', 'w', encoding='utf8')
+        f.write('id;name;lname;email;password')
+        f.close()
+    else:
+        print('users.csv located')
+    if 'users' not in ld:
+        os.mkdir('users')
+    else:
+        print('users folder located')
+
+
 @app.before_request
 def before_request():
     g.db = sqlite3.connect(DATABASE)
+    g.user = current_user
 
 
 @app.route("/Vyshka_slovari_main", methods=['POST', 'GET'])
@@ -228,18 +305,117 @@ def extended_search_page():
         return render_template('Show_extended_entries.html', form=form, result=result)
     return render_template('Slovar_extended_search.html', form=form)
 
+
 @app.route('/csv_result/results.csv')
 def download():
     return send_from_directory('csv_result/', "results.csv")
+
 
 @app.route("/Vyshka_slovari_enter")
 def enter_page():
     return render_template('Slovar_enter.html')
 
 
-@app.route("/Vyshka_slovari_register")
+@app.route("/check_user_id", methods=['GET', 'POST'])
+def checkUserId():
+    registered = False
+    email = request.form['e-mail']    
+    password = request.form['password']
+    print(email, password)
+
+    db = open('users.csv', 'r', encoding='utf8').read().split('\n')
+    for line in db:
+        if line == '':
+            pass
+        else:
+            e = line.split(';')
+            if e[3] == email:
+                if e[4] == password:
+                    registered = True
+                    firstname, lastname = e[1], e[2]
+                    break
+    
+    if registered:
+        uid = int(e[0])
+        u = User(email, uid, firstname, lastname)
+        login_user(u)
+        return redirect("/Vyshka_slovari_main")
+    else:
+        uid =  None
+        return render_template('Slovar_enter.html', mistake=True)
+
+
+def validateEmail(email):
+    m = re.search('[A-Za-z0-9\.]+@[A-Za-z0-9]+\.[A-Za-z]', email)
+    if m:
+        return True
+    else:
+        return False
+
+
+@app.route("/new_user", methods=['GET', 'POST'])
+def new_user():
+
+    f = open('users.csv', 'r', encoding='utf8').read().split('\n')[1:]
+    try:
+        last_id = int(f[-1].split(';')[0])
+    except:
+        last_id = 0
+    new_id = last_id + 1
+    firstname = request.form['firstname']
+    lastname = request.form['lastname']
+    email = request.form['e-mail']
+    password = request.form['password']
+    password_check = request.form['password_check']
+
+    mistake = ''
+    if password != password_check:
+        mistake += 'Пароли не совпадают!\n'
+    if not validateEmail(email) :
+        mistake += 'Введите корректный email!\n'
+
+    if mistake != '':
+        return render_template('/Slovar_register.html', mistake=mistake)
+
+    else:
+        nu = '%s;%s;%s;%s;%s'%(new_id, firstname, lastname, email, password)
+        
+        f_ = open('users.csv', 'r', encoding='utf8').read()
+        f = open('users.csv', 'w', encoding='utf8')
+        f.write(f_)
+        f.write('\n'+nu)
+        f.close()
+
+        os.mkdir('users/%s'%new_id)
+        u = User(email, new_id, firstname, lastname)
+        login_user(u)
+
+        return render_template('/Slovar_main.html', mistake='')
+
+
+@app.route("/logout")
+def logout():
+    logout_user()
+    return redirect("/Vyshka_slovari_main")
+
+
+@app.route("/Vyshka_slovari_register", methods=['GET', 'POST'])
 def register_page():
-    return render_template('Slovar_register.html')
+    return render_template('/Slovar_register.html', mistake='')
+
+
+@app.route("/cabinet", methods=['GET', 'POST'])
+def cabinet():
+    return render_template('/cabinet.html')
+
+
+@app.route("/upload_slov", methods=['GET', 'POST'])
+def uploadSlov():
+    if request.method == 'POST':
+        f = request.files['file']
+        f.save(f.filename)
+        shutil.move(f.filename, "users/%s/%s"%(current_user.id, f.filename))
+        return redirect('/Vyshka_slovari_main')
 
 
 if __name__ == "__main__":

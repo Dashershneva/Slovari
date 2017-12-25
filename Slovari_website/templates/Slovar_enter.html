@@ -40,10 +40,7 @@
 		  <a class="navbar-brand" href="Vyshka_slovari_about">О проекте</a>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
-          <form class="navbar-form navbar-right" role="form">
-            <a type="submit" class="btn btn-success" href="#">Войти</a>
-			<a type="submit" class="btn btn-success" href="Vyshka_slovari_register" style="color:white">Регистрация</a>
-          </form>
+          {% include 'register.html' %}
         </div><!--/.navbar-collapse -->
       </div>
     </nav>
@@ -52,7 +49,10 @@
 	      <div class="info">
 		    <h2>Вход</h2>
             <p>Войдите, чтобы добавить новый словарь. Если у вас еще нет аккаунта, <a href="Vyshka_slovari_register">зарегистрируйтесь</a></p>
-			<form class="searchbar-text" role="form">
+        {% if mistake == True %}
+        <p style="color:red">Проверьте правильность логина и пароля</p>
+        {% endif %}
+			<form class="searchbar-text" role="form" action="/check_user_id" name="check_user_id" method='POST'>
 		      E-mail<br>
 		      <input class="searchfield register" type="text" name="e-mail" value="Введите e-mail">
 		      <br>
