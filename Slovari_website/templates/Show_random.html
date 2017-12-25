@@ -1,0 +1,12 @@
+{%extends "Slovar_main.html"%}
+
+{% block random %}
+	<h2>Случайное слово: {{ rand_word[0][1] }}</h2>
+	<div class="col-md-6">
+		<div class="card row">
+			<h3>Значение:</h3>
+			<p>{{ rand_word[0][4] }}<p>
+			<p style="float:right;">{{ rand_word[0][14] }}</p>
+		</div>
+	</div>
+{% endblock %}

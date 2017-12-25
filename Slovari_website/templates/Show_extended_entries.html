@@ -7,9 +7,10 @@
 	</form>
 	<br>
 	{% for res in result%}
-		<table class='extended_table'>
+		<table>
 			<tr>
-				<td>{{ res }}</td>
+				<td class='extended_table'>{{ res[0] }} {{ res[2] }} {{ res[3] }} {{ res[6] }} {{ res[8] }}</td>
+				<br>
 			</tr>
 		</table>	
 	{% endfor %}

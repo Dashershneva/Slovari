@@ -19,7 +19,7 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = 'Do not tell anyone'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
-DATABASE = 'C:/Users/dsher/Downloads/slovari.db'
+DATABASE = 'C:/Users/dsher/Documents/slovari.db'
 
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -48,6 +48,8 @@ def handle_exception(val):
 
 def handle_gram(val):
     val_new = (' — ',)
+    if val == []:
+        return val_new
     if val[0][0] == None:
         return val_new
     if val[0][0] != None:
@@ -164,10 +166,15 @@ def before_request():
     g.db = sqlite3.connect(DATABASE)
     g.user = current_user
 
-
+@app.route("/")
 @app.route("/Vyshka_slovari_main", methods=['POST', 'GET'])
 def main_page():
-    return render_template("Slovar_main.html")
+    rand_word = g.db.execute("SELECT * FROM test WHERE usg = 'книжн.' ORDER BY RANDOM() LIMIT 1").fetchall()
+    rand_word = handle_exception(rand_word)
+    print("rand: ", rand_word[0][1])
+    return render_template("Show_random.html",
+                           rand_word=rand_word
+                           )
 
 @app.route('/Vyshka_slovari_main/<word>', methods=['POST', 'GET'])
 def show_entries(word):
