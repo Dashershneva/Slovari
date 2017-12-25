@@ -21,6 +21,10 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 DATABASE = 'C:/Users/dsher/Downloads/slovari.db'
 
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = 'login'
+
 
 @login_manager.user_loader
 def load_user(userid):
