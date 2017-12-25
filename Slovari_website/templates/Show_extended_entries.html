@@ -1,5 +1,9 @@
 {%extends "Slovar_extended_search.html"%}
 
+{% block button %}
+	<a href="{{ url_for('extended_search_page') }}" class="btn" style="float:right; margin-top: 5px;">Очистить поиск</a>
+{% endblock %}
+
 {% block extended %}
 	<h2>Результаты поиска:</h2>
 	<form method="POST" enctype="multipart/form-data">
