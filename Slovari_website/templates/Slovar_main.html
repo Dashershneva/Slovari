@@ -57,7 +57,7 @@
 		    <div class="col-md-11">
               <input name="search-item" type="text" placeholder="Введите слово" class="searchfield" style="color:black">
 			  <br>
-			  <a class="extended_search" href="Vyshka_slovari_extended_search">Расширенный поиск</a>
+			  <a class="extended_search" href="{{ url_for('extended_search_page') }}">Расширенный поиск</a>
 			  <br>
 			</div>
 			<div class="col-md-1" style="width: 30px;">
@@ -66,6 +66,10 @@
 			    function goToPage() {
 				  var url = document.forms["search-form"]["search-item"].value;
 				  document.location.href = "/Vyshka_slovari_main/" + url;
+				}
+				function validateForm() {
+				  goToPage();
+				  return false;
 				}
 			  </script>
 			</div>
