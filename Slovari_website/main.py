@@ -38,7 +38,7 @@ def load_user(userid):
 
 
 def handle_exception(val):
-    val_new = [("пока не знаю)", "—")]
+    val_new = [("пока не знаю :)", "—")]
     if val == []:
         return val_new
     if val[0][0] == None:

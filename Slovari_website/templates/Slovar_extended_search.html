@@ -53,21 +53,21 @@
 		    <div class="col-md-4">
 			  <h4>Часть речи</h4>
 			  <p>{{ form.noun_field }}</p>
+		    </div>
+		    <div class="col-md-4">
 			  <h4>Грамматические признаки</h4>
 		      <h5>Род</h5>
 			  <p>{{ form.gender_field }}</p>
 			  <h5>Вид</h5>
 			  <p>{{ form.aspect_field }}</p>
-		    </div>
-		    <div class="col-md-4">
-			  <h4>Стилистические пометы</h4>
-			  <p class='searchbar-text'>{{ form.marker_field }}</p>
-			  <h4>Заимствования</h4>
-			  <p class='searchbar-text'>{{ form.borrowings_field }}</p>
 		    </div>  
 		    <div class="col-md-4">
 			  <h4>Словари</h4>
-			  <p class='searchbar-text'>{{ form.dict_field }}</p>
+			  <p class='searchbar-text'>{{ form.dict_field(class_="searchfield") }}</p>
+			  <h4>Стилистические пометы</h4>
+			  <p>{{ form.marker_field(class_="searchfield") }}</p>
+			  <h4>Заимствования</h4>
+			  <p>{{ form.borrowings_field(class_="searchfield") }}</p>
 		    </div>
 		  </div>
 		  <input class="btn" type="submit" value="Найти" style="float:right; margin-top: 5px;">
