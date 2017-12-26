@@ -38,7 +38,7 @@ def load_user(userid):
 
 
 def handle_exception(val):
-    val_new = [("пока не знаю :)", "—")]
+    val_new = [("Нет информации", "—")]
     if val == []:
         return val_new
     if val[0][0] == None:
@@ -385,7 +385,7 @@ def checkUserId():
         uid = int(e[0])
         u = User(email, uid, firstname, lastname)
         login_user(u)
-        return redirect("/Vyshka_slovari_main")
+        return redirect(url_for('main_page'))
     else:
         uid =  None
         return render_template('Slovar_enter.html', mistake=True)
@@ -421,7 +421,7 @@ def new_user():
         mistake += 'Введите корректный email!\n'
 
     if mistake != '':
-        return render_template('/Slovar_register.html', mistake=mistake)
+        return render_template('Slovar_register.html', mistake=mistake)
 
     else:
         nu = '%s;%s;%s;%s;%s'%(new_id, firstname, lastname, email, password)
@@ -436,24 +436,23 @@ def new_user():
         u = User(email, new_id, firstname, lastname)
         login_user(u)
 
-        return render_template('/Slovar_main.html', mistake='')
+        return render_template('Slovar_main.html', mistake='')
 
 
 @app.route("/logout")
 def logout():
     logout_user()
-    return redirect("/Vyshka_slovari_main")
+    return redirect(url_for('main_page'))
 
 
 @app.route("/Vyshka_slovari_register", methods=['GET', 'POST'])
 def register_page():
-    return render_template('/Slovar_register.html', mistake='')
+    return render_template('Slovar_register.html', mistake='')
 
 
 @app.route("/cabinet", methods=['GET', 'POST'])
 def cabinet():
-    # fileslist = current_user.get_files()
-    return render_template('/cabinet.html', mistake = '')
+    return render_template('cabinet.html', mistake = '')
 
 
 def validate_slov(fname, SCHEME_FILE='scheme.xsd'):
@@ -489,17 +488,17 @@ def uploadSlov():
         
         if is_valid[0]:
             shutil.move(os.path.join(UPLOAD_FOLDER, f.filename), 'users/%s'%current_user.id)
-            return redirect('/cabinet')
+            return redirect(url_for('cabinet'))
         else:
             os.remove(os.path.join(UPLOAD_FOLDER, f.filename))
-            return render_template('/cabinet.html', mistake='Что-то не то с файлом: %s'%is_valid[1])
+            return render_template('cabinet.html', mistake='Что-то не так с файлом: %s'%is_valid[1])
 
 
 @app.route('/remove/<filename>', methods=['GET', 'POST'])
 def remove(filename):
     # if request.method == 'POST':
     f = os.remove(os.path.join('users', current_user.id, filename))
-    return redirect('/cabinet')
+    return redirect(url_for('cabinet'))
 
 
 
