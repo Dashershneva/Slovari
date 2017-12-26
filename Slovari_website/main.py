@@ -249,6 +249,10 @@ def show_entries(word):
 def about_page():
     return render_template('Slovar_about.html')
 
+@app.route("/Vyshka_slovari_dictionaries")
+def about_dict():
+    return render_template('Dictionaries.html')
+
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
