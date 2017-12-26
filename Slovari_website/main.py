@@ -15,15 +15,18 @@ import csv
 from flask_login import LoginManager, current_user, login_required, login_user, logout_user, LoginManager, UserMixin
 from werkzeug import secure_filename
 import shutil
+import os.path
 
 UPLOAD_FOLDER = 'csv_result'
 ALLOWED_EXTENSIONS = set(['csv'])
+BASE_DIR = os.path.dirname(__file__)
+db_path = os.path.join(BASE_DIR, 'slovari.db')
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'Do not tell anyone'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
-DATABASE = 'slovari.db'
+#DATABASE = 'slovari.db'
 
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -190,7 +193,7 @@ def before_first_request():
 
 @app.before_request
 def before_request():
-    g.db = sqlite3.connect(DATABASE)
+    g.db = sqlite3.connect(db_path)
     g.user = current_user
 
 @app.route("/")
