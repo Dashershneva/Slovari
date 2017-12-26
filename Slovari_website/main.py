@@ -1,4 +1,5 @@
-from flask import Flask, request, json, Response, render_template_string, abort, render_template, jsonify, g, url_for, redirect, send_from_directory
+from flask import Flask, request, json, Response, render_template_string, abort, render_template, jsonify
+from flask import g, url_for, redirect, send_from_directory
 from flask_wtf import Form
 from wtforms import StringField, PasswordField, SelectField, SelectMultipleField, BooleanField, RadioField
 from wtforms.validators import InputRequired
@@ -19,7 +20,7 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = 'Do not tell anyone'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
-DATABASE = 'slovari.db'
+DATABASE = 'C:/Users/dsher/Documents/slovari.db'
 
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -41,18 +42,18 @@ def handle_exception(val):
     val_new = [("Нет информации", "—")]
     if val == []:
         return val_new
-    if val[0][0] == None:
+    if val[0][0] is None:
         return val_new
-    if val[0][0] != None:
+    if val[0][0] is not None:
         return val
 
 def handle_gram(val):
     val_new = (' — ',)
     if val == []:
         return val_new
-    if val[0][0] == None:
+    if val[0][0] is None:
         return val_new
-    if val[0][0] != None:
+    if val[0][0] is not None:
         return val[0]
 
 #extended search fields names
