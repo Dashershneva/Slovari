@@ -21,6 +21,7 @@ UPLOAD_FOLDER = 'csv_result'
 ALLOWED_EXTENSIONS = set(['csv'])
 BASE_DIR = os.path.dirname(__file__)
 db_path = os.path.join(BASE_DIR, 'slovari.db')
+csv_path = os.path.join(BASE_DIR, 'csv_result/results.csv')
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'Do not tell anyone'
@@ -390,7 +391,7 @@ def extended_search_page():
             result = g.db.execute(
                 "SELECT orth, phon, sense, pos, gender, \
                  asp, dic_name, usg, etym_lang FROM test WHERE dic_name='%s'" % dict).fetchall()
-        with open('csv_result/results.csv', 'w', newline='', encoding='utf-8') as csvfile:
+        with open(csv_path, 'w', newline='', encoding='utf-8') as csvfile:
             fieldnames = ['orth', 'phon', 'sense', 'pos', 'gender', 'asp', 'dic_name', 'usg', 'etym_lang']
             filewriter = csv.DictWriter(csvfile, delimiter=' ', fieldnames=fieldnames)
             filewriter.writeheader()
