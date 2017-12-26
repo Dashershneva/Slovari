@@ -22,6 +22,8 @@ ALLOWED_EXTENSIONS = set(['csv'])
 BASE_DIR = os.path.dirname(__file__)
 db_path = os.path.join(BASE_DIR, 'slovari.db')
 csv_path = os.path.join(BASE_DIR, 'csv_result/results.csv')
+scheme_path = os.path.join(BASE_DIR, 'scheme.xsd')
+users_path = os.path.join(BASE_DIR, 'users.csv')
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'Do not tell anyone'
@@ -480,8 +482,8 @@ def new_user():
     else:
         nu = '%s;%s;%s;%s;%s'%(new_id, firstname, lastname, email, password)
 
-        f_ = open('users.csv', 'r', encoding='utf8').read()
-        f = open('users.csv', 'w', encoding='utf8')
+        f_ = open(users_path, 'r', encoding='utf8').read()
+        f = open(users_path, 'w', encoding='utf8')
         f.write(f_)
         f.write('\n'+nu)
         f.close()
@@ -509,7 +511,7 @@ def cabinet():
     return render_template('cabinet.html', mistake = '')
 
 
-def validate_slov(fname, SCHEME_FILE='scheme.xsd'):
+def validate_slov(fname, SCHEME_FILE=scheme_path):
 
     with open(SCHEME_FILE) as xsd:
         xmlschema_doc = etree.parse(xsd)
