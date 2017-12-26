@@ -1,11 +1,11 @@
-# -*- coding: utf-8 -*-
-
 from flask import Flask, request, json, Response, render_template_string, abort, render_template, jsonify, g, url_for, redirect, send_from_directory
 from flask_wtf import Form
 from wtforms import StringField, PasswordField, SelectField, SelectMultipleField, BooleanField, RadioField
 from wtforms.validators import InputRequired
 import sqlite3
 import re
+import traceback
+from lxml import etree
 import os
 import csv
 from flask_login import LoginManager, current_user, login_required, login_user, logout_user, LoginManager, UserMixin
@@ -38,7 +38,7 @@ def load_user(userid):
 
 
 def handle_exception(val):
-    val_new = [("Нет информации", "—")]
+    val_new = [("пока не знаю :)", "—")]
     if val == []:
         return val_new
     if val[0][0] == None:
@@ -119,6 +119,10 @@ class User(UserMixin):
     def get_id(self):
         return self.id
 
+    def get_files(self):
+        d = os.path.join('users', self.id)
+        return os.listdir(d)
+
 
 
 @login_manager.user_loader
@@ -159,6 +163,17 @@ def before_first_request():
         os.mkdir('users')
     else:
         print('users folder located')
+    f = open('users.csv', 'r', encoding='utf8')
+    for line in f:
+        uid = line.split(';')[0]
+        if uid != 'id':
+            try:
+                os.mkdir('users/%s'%uid)
+            except Exception as e:
+                print('user %s folder exists'%uid)
+        
+
+        
 
 
 @app.before_request
@@ -370,7 +385,7 @@ def checkUserId():
         uid = int(e[0])
         u = User(email, uid, firstname, lastname)
         login_user(u)
-        return redirect(url_for('main_page'))
+        return redirect("/Vyshka_slovari_main")
     else:
         uid =  None
         return render_template('Slovar_enter.html', mistake=True)
@@ -406,7 +421,7 @@ def new_user():
         mistake += 'Введите корректный email!\n'
 
     if mistake != '':
-        return render_template('Slovar_register.html', mistake=mistake)
+        return render_template('/Slovar_register.html', mistake=mistake)
 
     else:
         nu = '%s;%s;%s;%s;%s'%(new_id, firstname, lastname, email, password)
@@ -421,32 +436,71 @@ def new_user():
         u = User(email, new_id, firstname, lastname)
         login_user(u)
 
-        return render_template('Slovar_main.html', mistake='')
+        return render_template('/Slovar_main.html', mistake='')
 
 
 @app.route("/logout")
 def logout():
     logout_user()
-    return redirect(url_for('main_page'))
+    return redirect("/Vyshka_slovari_main")
 
 
 @app.route("/Vyshka_slovari_register", methods=['GET', 'POST'])
 def register_page():
-    return render_template('Slovar_register.html', mistake='')
+    return render_template('/Slovar_register.html', mistake='')
 
 
 @app.route("/cabinet", methods=['GET', 'POST'])
 def cabinet():
-    return render_template('cabinet.html')
+    # fileslist = current_user.get_files()
+    return render_template('/cabinet.html', mistake = '')
+
+
+def validate_slov(fname, SCHEME_FILE='scheme.xsd'):
+
+    with open(SCHEME_FILE) as xsd:
+        xmlschema_doc = etree.parse(xsd)
+    xmlschema = etree.XMLSchema(xmlschema_doc)
+
+    is_valid = False
+    error = []
+    name = ''
+    try:
+        with open(fname, encoding='utf-8') as valid:
+            doc = etree.parse(valid)
+        xmlschema.assert_(doc)
+        is_valid = xmlschema.validate(doc)
+        if is_valid:
+            name = doc.getroot()[1][0][0].text
+    except Exception as e:
+        error = traceback.format_exception_only(type(e), e)
+        error = re.sub(r'File "(.*)/(.*?)"', 'File "\\2"', ''.join(error))
+    return is_valid, error, name
 
 
 @app.route("/upload_slov", methods=['GET', 'POST'])
 def uploadSlov():
     if request.method == 'POST':
         f = request.files['file']
-        f.save(f.filename)
-        shutil.move(f.filename, "users/%s/%s"%(current_user.id, f.filename))
-        return redirect(url_for('main_page'))
+        f.save(os.path.join(UPLOAD_FOLDER ,f.filename))
+
+        is_valid = validate_slov(os.path.join(UPLOAD_FOLDER, f.filename))
+        print(is_valid)
+        
+        if is_valid[0]:
+            shutil.move(os.path.join(UPLOAD_FOLDER, f.filename), 'users/%s'%current_user.id)
+            return redirect('/cabinet')
+        else:
+            os.remove(os.path.join(UPLOAD_FOLDER, f.filename))
+            return render_template('/cabinet.html', mistake='Что-то не то с файлом: %s'%is_valid[1])
+
+
+@app.route('/remove/<filename>', methods=['GET', 'POST'])
+def remove(filename):
+    # if request.method == 'POST':
+    f = os.remove(os.path.join('users', current_user.id, filename))
+    return redirect('/cabinet')
+
 
 
 if __name__ == "__main__":
