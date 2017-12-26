@@ -38,7 +38,7 @@
             <span class="icon-bar"></span>
           </button>
           <a class="navbar-brand" href="#">Вышка.Словари</a>
-		  <a class="navbar-brand" href="Vyshka_slovari_about">О проекте</a>
+		  <a class="navbar-brand" href="{{ url_for('about_page') }}">О проекте</a>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           {% include 'register.html' %}
@@ -65,7 +65,8 @@
 			  <script type= "text/javascript">
 			    function goToPage() {
 				  var url = document.forms["search-form"]["search-item"].value;
-				  document.location.href = "/Vyshka_slovari_main/" + url;
+				  var main_p = "{{ url_for('main_page') }}";
+				  document.location.href = main_p + "/" + url;
 				}
 				function validateForm() {
 				  goToPage();
