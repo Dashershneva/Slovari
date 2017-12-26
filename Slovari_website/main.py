@@ -20,7 +20,7 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = 'Do not tell anyone'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
-DATABASE = 'C:/Users/dsher/Documents/slovari.db'
+DATABASE = 'slovari.db'
 
 login_manager = LoginManager()
 login_manager.init_app(app)
