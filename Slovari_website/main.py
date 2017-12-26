@@ -6,6 +6,8 @@ from wtforms import StringField, PasswordField, SelectField, SelectMultipleField
 from wtforms.validators import InputRequired
 import sqlite3
 import re
+import traceback
+from lxml import etree
 import os
 import csv
 from flask_login import LoginManager, current_user, login_required, login_user, logout_user, LoginManager, UserMixin
@@ -19,7 +21,7 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = 'Do not tell anyone'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
-DATABASE = 'C:/Users/dsher/Documents/slovari.db'
+DATABASE = 'slovari.db'
 
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -119,6 +121,10 @@ class User(UserMixin):
     def get_id(self):
         return self.id
 
+    def get_files(self):
+        d = os.path.join('users', self.id)
+        return os.listdir(d)
+
 
 
 @login_manager.user_loader
@@ -159,6 +165,17 @@ def before_first_request():
         os.mkdir('users')
     else:
         print('users folder located')
+    f = open('users.csv', 'r', encoding='utf8')
+    for line in f:
+        uid = line.split(';')[0]
+        if uid != 'id':
+            try:
+                os.mkdir('users/%s'%uid)
+            except Exception as e:
+                print('user %s folder exists'%uid)
+        
+
+        
 
 
 @app.before_request
@@ -437,16 +454,55 @@ def register_page():
 
 @app.route("/cabinet", methods=['GET', 'POST'])
 def cabinet():
-    return render_template('/cabinet.html')
+    # fileslist = current_user.get_files()
+    return render_template('/cabinet.html', mistake = '')
+
+
+def validate_slov(fname, SCHEME_FILE='scheme.xsd'):
+
+    with open(SCHEME_FILE) as xsd:
+        xmlschema_doc = etree.parse(xsd)
+    xmlschema = etree.XMLSchema(xmlschema_doc)
+
+    is_valid = False
+    error = []
+    name = ''
+    try:
+        with open(fname, encoding='utf-8') as valid:
+            doc = etree.parse(valid)
+        xmlschema.assert_(doc)
+        is_valid = xmlschema.validate(doc)
+        if is_valid:
+            name = doc.getroot()[1][0][0].text
+    except Exception as e:
+        error = traceback.format_exception_only(type(e), e)
+        error = re.sub(r'File "(.*)/(.*?)"', 'File "\\2"', ''.join(error))
+    return is_valid, error, name
 
 
 @app.route("/upload_slov", methods=['GET', 'POST'])
 def uploadSlov():
     if request.method == 'POST':
         f = request.files['file']
-        f.save(f.filename)
-        shutil.move(f.filename, "users/%s/%s"%(current_user.id, f.filename))
-        return redirect('/Vyshka_slovari_main')
+        f.save(os.path.join(UPLOAD_FOLDER ,f.filename))
+
+        is_valid = validate_slov(os.path.join(UPLOAD_FOLDER, f.filename))
+        print(is_valid)
+        
+        if is_valid[0]:
+            shutil.move(os.path.join(UPLOAD_FOLDER, f.filename), 'users/%s'%current_user.id)
+            return redirect('/cabinet')
+        else:
+            os.remove(os.path.join(UPLOAD_FOLDER, f.filename))
+            return render_template('/cabinet.html', mistake='Что-то не то с файлом: %s'%is_valid[1])
+
+
+@app.route('/remove/<filename>', methods=['GET', 'POST'])
+def remove(filename):
+    # if request.method == 'POST':
+    f = os.remove(os.path.join('users', current_user.id, filename))
+    return redirect('/cabinet')
+
 
 
 if __name__ == "__main__":
