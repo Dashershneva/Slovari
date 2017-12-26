@@ -36,8 +36,8 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="Vyshka_slovari_main">Вышка.Словари</a>
-		  <a class="navbar-brand" href="Vyshka_slovari_about">О проекте</a>
+          <a class="navbar-brand" href="{{ url_for('main_page') }}">Вышка.Словари</a>
+		  <a class="navbar-brand" href="{{ url_for('about_page') }}">О проекте</a>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           {% include 'register.html' %}
@@ -48,7 +48,7 @@
 	  <div class="container" class="col-md-12">
 	      <div class="info">
 		    <h2>Вход</h2>
-            <p>Войдите, чтобы добавить новый словарь. Если у вас еще нет аккаунта, <a href="Vyshka_slovari_register">зарегистрируйтесь</a></p>
+            <p>Войдите, чтобы добавить новый словарь. Если у вас еще нет аккаунта, <a href="{{ url_for('register_page') }}">зарегистрируйтесь</a></p>
         {% if mistake == True %}
         <p style="color:red">Проверьте правильность логина и пароля</p>
         {% endif %}

@@ -19,7 +19,7 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = 'Do not tell anyone'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
-DATABASE = 'C:/Users/dsher/Documents/slovari.db'
+DATABASE = 'slovari.db'
 
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -38,7 +38,7 @@ def load_user(userid):
 
 
 def handle_exception(val):
-    val_new = [("пока не знаю :)", "—")]
+    val_new = [("Нет информации", "—")]
     if val == []:
         return val_new
     if val[0][0] == None:
@@ -370,7 +370,7 @@ def checkUserId():
         uid = int(e[0])
         u = User(email, uid, firstname, lastname)
         login_user(u)
-        return redirect("/Vyshka_slovari_main")
+        return redirect(url_for('main_page'))
     else:
         uid =  None
         return render_template('Slovar_enter.html', mistake=True)
@@ -406,7 +406,7 @@ def new_user():
         mistake += 'Введите корректный email!\n'
 
     if mistake != '':
-        return render_template('/Slovar_register.html', mistake=mistake)
+        return render_template('Slovar_register.html', mistake=mistake)
 
     else:
         nu = '%s;%s;%s;%s;%s'%(new_id, firstname, lastname, email, password)
@@ -421,23 +421,23 @@ def new_user():
         u = User(email, new_id, firstname, lastname)
         login_user(u)
 
-        return render_template('/Slovar_main.html', mistake='')
+        return render_template('Slovar_main.html', mistake='')
 
 
 @app.route("/logout")
 def logout():
     logout_user()
-    return redirect("/Vyshka_slovari_main")
+    return redirect(url_for('main_page'))
 
 
 @app.route("/Vyshka_slovari_register", methods=['GET', 'POST'])
 def register_page():
-    return render_template('/Slovar_register.html', mistake='')
+    return render_template('Slovar_register.html', mistake='')
 
 
 @app.route("/cabinet", methods=['GET', 'POST'])
 def cabinet():
-    return render_template('/cabinet.html')
+    return render_template('cabinet.html')
 
 
 @app.route("/upload_slov", methods=['GET', 'POST'])
@@ -446,7 +446,7 @@ def uploadSlov():
         f = request.files['file']
         f.save(f.filename)
         shutil.move(f.filename, "users/%s/%s"%(current_user.id, f.filename))
-        return redirect('/Vyshka_slovari_main')
+        return redirect(url_for('main_page'))
 
 
 if __name__ == "__main__":
