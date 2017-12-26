@@ -62,6 +62,13 @@ def handle_gram(val):
     if val[0][0] is not None:
         return val[0]
 
+def secure_query(word):
+    re_clr = re.compile(u"[^a-zа-яё‘]", re.I + re.U)
+    word = re_clr.sub(u' ', word)
+    if len(word.split()) > 1:
+        word = word.split()[0]
+    return word
+
 #extended search fields names
 pos_labels = [(' сущ. ','Существительное'),(' глаг. ','Глагол'), (' мест. нареч. ','Местоименное наречие'),
               (' прил. ','Прилагательное'),(' нареч. ', 'Наречие'), (' числ. ', 'Числительное'), (' част. ','Частица'),
@@ -208,7 +215,7 @@ def main_page():
 
 @app.route('/Vyshka_slovari_main/<word>', methods=['POST', 'GET'])
 def show_entries(word):
-    word = word.lower()
+    word = secure_query(word)
     mng1 = g.db.execute(
         "SELECT sense, dic_name FROM test WHERE orth='%s' \
          AND dic_name='Большой Энциклопедический Словарь'" % word).fetchall()
