@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 from flask import Flask, request, json, Response, render_template_string, abort, render_template, jsonify
 from flask import g, url_for, redirect, send_from_directory
 from flask_wtf import Form

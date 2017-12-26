@@ -1,0 +1,6 @@
+Flask==0.12.2
+Flask-Login==0.4.1
+Flask-WTF==0.14.2
+lxml==4.1.0
+Werkzeug==0.12.2
+WTForms==2.1
