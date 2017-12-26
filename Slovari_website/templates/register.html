@@ -1,10 +1,10 @@
 <form class="navbar-form navbar-right" role="form">
     {% if current_user.is_authenticated %}
-  <a type="submit" class="btn btn-success" href="/cabinet">{{ current_user.firstname }} {{ current_user.lastname }}: личный кабинет</a>
-  <a type="submit" class="btn btn-success" href="/logout">Выйти</a>
+  <a type="submit" class="btn btn-success" href="{{ url_for('cabinet') }}">{{ current_user.firstname }} {{ current_user.lastname }}: личный кабинет</a>
+  <a type="submit" class="btn btn-success" href="{{ url_for('logout') }}">Выйти</a>
     {% else %}
-    <a type="submit" class="btn btn-success" href="Vyshka_slovari_enter" style="color:white">Войти</a>
-    <a type="submit" class="btn btn-success" href="Vyshka_slovari_register" style="color:white">Регистрация</a>
+    <a type="submit" class="btn btn-success" href="{{ url_for('enter_page') }}" style="color:white">Войти</a>
+    <a type="submit" class="btn btn-success" href="{{ url_for('register_page') }}" style="color:white">Регистрация</a>
     {% endif %}
     
   </form>
