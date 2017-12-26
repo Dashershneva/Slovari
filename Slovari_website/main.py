@@ -228,6 +228,9 @@ def show_entries(word):
         "SELECT asp FROM test WHERE orth='%s' AND dic_name='Толковый словарь Кузнецова'" % word).fetchall()
     gov = g.db.execute(
         "SELECT gov FROM test WHERE orth='%s' AND dic_name='Толковый словарь Кузнецова'" % word).fetchall()
+    examp = g.db.execute(
+        "SELECT examp, dic_name FROM test WHERE orth='%s' \
+        AND dic_name='Толковый словарь Кузнецова'" % word).fetchall()
 
     ant = handle_exception(ant)
     syn = handle_exception(syn)
