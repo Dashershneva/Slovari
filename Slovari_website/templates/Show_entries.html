@@ -42,6 +42,10 @@
 			</div>
 			{% if part_of_speech or gender or aspect or govern %}
 				<div class="card">
+					<h3>Примеры употребления:</h3>
+                        <p>{{ example[0][0] }}</p>
+				</div>
+				<div class="card">
 					<h3>Грамматическая информация:</h3>
 					{% if part_of_speech %}
 						<p> Часть речи: {{ part_of_speech[0] }}</p>
