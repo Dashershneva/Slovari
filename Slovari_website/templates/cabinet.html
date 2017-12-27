@@ -76,7 +76,7 @@
 	  <div class="container col-md-12 info">
         <h2>Загруженные словари</h2>
           {% for i in current_user.get_files() %}
-          <p>{{ i }} <a href='{{ url_for("remove(i)") }}'>Удалить</a></p>
+          <p>{{ i }} <a href='{{ url_for("remove", filename = i) }}'>Удалить</a></p>
           {% endfor %}
            
 	  </div>
