@@ -45,27 +45,33 @@
         </div><!--/.navbar-collapse -->
       </div>
     </nav>
-	  
-	  <div class="container" class="col-md-12">
+	
+	<div class="container">
+	  <div class="col-md-12">
         <h2>{{ current_user.firstname }} {{ current_user.lastname }}</h2>
         <h3>{{ current_user.email }}</h3>
-      
-	      <div class="info">
-        <h2>Загрузить словарь в формате TEI</h2>
-        
-        <form action="/upload_slov"  enctype="multipart/form-data" method="POST">
-          <input class="btn" type="file" name="file"><input class="btn" id="post_btn" type="submit" name="upload_slov" value="Загрузить словарь">
-          </form>           {{ mistake }}
+      </div>
+	  
+	  <div class="container">
+	    <div class="info col-md-6">
+          <h2>Загрузить словарь в формате TEI</h2>
+          <form action="/upload_slov"  enctype="multipart/form-data" method="POST">
+            <input class="btn" type="file" name="file"><input class="btn" id="post_btn" type="submit" name="upload_slov" value="Загрузить словарь">
+            </form>           {{ mistake }}
         </div>
-
-        <div class='info'>
-            <h2>Загруженные словари</h2>
+	    <div class="col-md-6">
+		  <a href="#">Скачать инструкцию по разметке</a>
+		  <br>
+		  <a href="#">Скачать TEI шаблон</a>
+	    </div>
+	  </div>
+		
+	  <div class="container col-md-12 info">
+        <h2>Загруженные словари</h2>
           {% for i in current_user.get_files() %}
           <p>{{ i }} <a href='remove/{{ i }}'>Удалить</a></p>
           {% endfor %}
-        </div>
            
-		  </div>
 	  </div>
 	  
 	  <hr>
