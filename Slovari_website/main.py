@@ -413,6 +413,13 @@ def extended_search_page():
 def download():
     return send_from_directory('csv_result/', "results.csv")
 
+@app.route('/csv_result/Instruktsia_po_zapolneniyu_shablona_TEI.pdf')
+def instuction():
+    return send_from_directory('csv_result/', "Instruktsia_po_zapolneniyu_shablona_TEI.pdf")
+
+@app.route('/csv_result/TEI-shablon.xlsx')
+def template():
+    return send_from_directory('csv_result/', "TEI-shablon.xlsx")
 
 @app.route("/Vyshka_slovari_enter")
 def enter_page():
