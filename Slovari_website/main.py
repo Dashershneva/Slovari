@@ -16,6 +16,7 @@ from flask_login import LoginManager, current_user, login_required, login_user, 
 from werkzeug import secure_filename
 import shutil
 import os.path
+from app import views
 
 UPLOAD_FOLDER = 'csv_result'
 ALLOWED_EXTENSIONS = set(['csv'])
