@@ -53,7 +53,7 @@
         {% if mistake == True %}
         <p style="color:red">Проверьте правильность логина и пароля</p>
         {% endif %}
-			<form class="searchbar-text" role="form" action="/check_user_id" name="check_user_id" method='POST'>
+			<form class="searchbar-text" role="form" action="{{ url_for('checkUserId') }}" name="check_user_id" method='POST'>
 		      E-mail<br>
 		      <input class="searchfield register" type="text" name="e-mail" placeholder="Введите e-mail">
 		      <br>
