@@ -24,6 +24,7 @@ db_path = os.path.join(BASE_DIR, 'slovari.db')
 csv_path = os.path.join(BASE_DIR, 'csv_result/results.csv')
 scheme_path = os.path.join(BASE_DIR, 'scheme.xsd')
 users_path = os.path.join(BASE_DIR, 'users.csv')
+users_dir_path = 'users'
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'Do not tell anyone'
@@ -418,7 +419,7 @@ def enter_page():
     return render_template('Slovar_enter.html')
 
 
-@app.route("/check_user_id", methods=['GET', 'POST'])
+@app.route('/check_user_id', methods=['GET', 'POST'])
 def checkUserId():
     registered = False
     email = request.form['e-mail']
@@ -455,7 +456,7 @@ def validateEmail(email):
         return False
 
 
-@app.route("/new_user", methods=['GET', 'POST'])
+@app.route('/new_user', methods=['GET', 'POST'])
 def new_user():
 
     f = open('users.csv', 'r', encoding='utf8').read().split('\n')[1:]
@@ -495,7 +496,7 @@ def new_user():
         return render_template('Slovar_main.html', mistake='')
 
 
-@app.route("/logout")
+@app.route('/logout')
 def logout():
     logout_user()
     return redirect(url_for('main_page'))
@@ -560,3 +561,4 @@ def remove(filename):
 
 if __name__ == "__main__":
     app.run(debug=True)
+    # print(__file__)

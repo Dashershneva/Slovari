@@ -58,6 +58,13 @@
           <form action="/upload_slov"  enctype="multipart/form-data" method="POST">
             <input class="btn" type="file" name="file"><input class="btn" id="post_btn" type="submit" name="upload_slov" value="Загрузить словарь">
             </form>           {{ mistake }}
+      
+	      <div class="info">
+        <h2>Загрузить словарь в формате TEI</h2>
+        
+        <form action="{{ url_for('uploadSlov') }}"  enctype="multipart/form-data" method="POST">
+          <input class="btn" type="file" name="file"><input class="btn" id="post_btn" type="submit" name="upload_slov" value="Загрузить словарь">
+          </form>           {{ mistake }}
         </div>
 	    <div class="col-md-6">
 		  <a href="#">Скачать инструкцию по разметке</a>
@@ -69,7 +76,7 @@
 	  <div class="container col-md-12 info">
         <h2>Загруженные словари</h2>
           {% for i in current_user.get_files() %}
-          <p>{{ i }} <a href='remove/{{ i }}'>Удалить</a></p>
+          <p>{{ i }} <a href='{{ url_for("remove(i)") }}'>Удалить</a></p>
           {% endfor %}
            
 	  </div>
