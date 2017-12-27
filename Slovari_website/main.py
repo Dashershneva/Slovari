@@ -488,7 +488,7 @@ def new_user():
 
     if mistake != '':
         # return render_template('Slovar_register.html', mistake=mistake)
-        redirect(url_for('main_page'))
+        return redirect(url_for('main_page'))
 
     else:
         nu = '%s;%s;%s;%s;%s'%(new_id, firstname, lastname, email, password)
