@@ -355,8 +355,8 @@ def extended_search_page():
                 if borrowed == [] and marker == []:
                     result = g.db.execute(
                         "SELECT orth, phon, sense, pos, gender, \
-                         asp, dic_name, usg, etym_lang FROM test WHERE pos=' глаг. \
-                         ' AND asp='%s' AND dic_name LIKE '%s'" % (aspect, dict)).fetchall()
+                         asp, dic_name, usg, etym_lang FROM test WHERE pos=' глаг. ' \
+                         AND asp='%s' AND dic_name LIKE '%s'" % (aspect, dict)).fetchall()
                 elif borrowed != [] and marker == []:
                     result = g.db.execute(
                         "SELECT orth, phon, sense, pos, gender, \
