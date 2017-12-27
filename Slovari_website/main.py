@@ -25,6 +25,7 @@ csv_path = os.path.join(BASE_DIR, 'csv_result/results.csv')
 scheme_path = os.path.join(BASE_DIR, 'scheme.xsd')
 users_path = os.path.join(BASE_DIR, 'users.csv')
 users_dir_path = 'users'
+folder_path = os.path.join(BASE_DIR, 'csv_result/')
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'Do not tell anyone'
@@ -411,15 +412,15 @@ def extended_search_page():
 
 @app.route('/csv_result/results.csv')
 def download():
-    return send_from_directory('csv_result/', "results.csv")
+    return send_from_directory(folder_path, "results.csv")
 
 @app.route('/csv_result/Instruktsia_po_zapolneniyu_shablona_TEI.pdf')
-def instuction():
-    return send_from_directory('csv_result/', "Instruktsia_po_zapolneniyu_shablona_TEI.pdf")
+def instruction():
+    return send_from_directory(folder_path, "Instruktsia_po_zapolneniyu_shablona_TEI.pdf")
 
 @app.route('/csv_result/TEI-shablon.xlsx')
 def template():
-    return send_from_directory('csv_result/', "TEI-shablon.xlsx")
+    return send_from_directory(folder_path, "TEI-shablon.xlsx")
 
 @app.route("/Vyshka_slovari_enter")
 def enter_page():
