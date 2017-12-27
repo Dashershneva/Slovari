@@ -453,7 +453,8 @@ def checkUserId():
         return redirect(url_for('main_page'))
     else:
         uid =  None
-        return render_template('Slovar_enter.html', mistake=True)
+        # return render_template('Slovar_enter.html', mistake=True)
+        return redirect(url_for('enter_page'))
 
 
 def validateEmail(email):
@@ -501,7 +502,7 @@ def new_user():
         u = User(email, new_id, firstname, lastname)
         login_user(u)
 
-        return render_template('Slovar_main.html', mistake='')
+        return redirect(url_for('main_page'))
 
 
 @app.route('/logout')
