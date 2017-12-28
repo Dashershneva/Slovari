@@ -45,7 +45,6 @@ def load_user(userid):
     for line in f:
         line = line.split(';')
         uid = int(line[0])
-        print(uid)
     return uid
 
 
@@ -173,7 +172,6 @@ def load_user(user_id):
         print('no such user')
         return None
     else:
-        print('%s %s'%(firstname, lastname))
         return User(email, uid, firstname, lastname, active)
 
 
@@ -185,11 +183,13 @@ def before_first_request():
         f.write('id;name;lname;email;password')
         f.close()
     else:
-        print('users.csv located')
+        pass
+        # print('users.csv located')
     if 'users' not in ld:
         os.mkdir('users')
     else:
-        print('users folder located')
+        pass
+        # print('users folder located')
     f = open('users.csv', 'r', encoding='utf8')
     for line in f:
         uid = line.split(';')[0]
@@ -432,7 +432,7 @@ def checkUserId():
     registered = False
     email = request.form['e-mail']
     password = request.form['password']
-    print(email, password)
+    # print(email, password)
 
     db = open('users.csv', 'r', encoding='utf8').read().split('\n')
     for line in db:
@@ -453,7 +453,6 @@ def checkUserId():
         return redirect(url_for('main_page'))
     else:
         uid =  None
-        # return render_template('Slovar_enter.html', mistake=True)
         return redirect(url_for('enter_page'))
 
 
@@ -480,19 +479,18 @@ def new_user():
     password = request.form['password']
     password_check = request.form['password_check']
 
-    mistake = ''
+    mistake = False
     if password != password_check:
-        mistake += 'Пароли не совпадают!\n'
+        mistake = True
     if not validateEmail(email) :
-        mistake += 'Введите корректный email!\n'
+        mistake = True
 
-    if mistake != '':
-        # return render_template('Slovar_register.html', mistake=mistake)
+    if mistake:
         return redirect(url_for('main_page'))
 
     else:
         nu = '%s;%s;%s;%s;%s'%(new_id, firstname, lastname, email, password)
-
+        
         f_ = open(users_path, 'r', encoding='utf8').read()
         f = open(users_path, 'w', encoding='utf8')
         f.write(f_)
@@ -551,7 +549,6 @@ def uploadSlov():
         f.save(os.path.join(UPLOAD_FOLDER ,f.filename))
 
         is_valid = validate_slov(os.path.join(UPLOAD_FOLDER, f.filename))
-        print(is_valid)
 
         if is_valid[0]:
             shutil.move(os.path.join(UPLOAD_FOLDER, f.filename), 'users/%s'%current_user.id)
