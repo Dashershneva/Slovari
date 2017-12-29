@@ -37,7 +37,7 @@
             <span class="icon-bar"></span>
           </button>
           <a class="navbar-brand" href="{{ url_for('main_page') }}">Вышка.Словари</a>
-		  <a class="navbar-brand" href="#">О проекте</a>
+		  <a class="navbar-brand" href="{{ url_for('about_page') }}">О проекте</a>
 		  <a class="navbar-brand" href="{{ url_for('about_dict') }}">О словарях</a>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
@@ -65,14 +65,16 @@
 			  <li>этимология</li>
 			  <li>пометы</li>
 			</ul>
-			<p> У нас также есть расширенный поиск, который позволяет найти все слова по заданным характеристикам (например, все заимствования из французского). </p>
+			<p> У нас также есть <a href="{{ url_for('extended_search_page') }}">расширенный поиск</a>, который позволяет найти все слова по заданным характеристикам (например, все заимствования из французского). </p>
 			<br>
 			<h2> Чем ещё хороши Вышка.Словари? </h2>
 			<p> Любой пользователь может сделать свой вклад в развитие проекта и загрузить на сайт свой словарь в формате tei, размеченный в соответствии с нашей инструкцией. </p>
 			<br>
 			<h2> Ссылки </h2>
+			<p>Проект сделан в Школе лингвистики Высшей Школы Экономики</p>
 			<p><a href = "https://github.com/Dashershneva/Slovari">Проект на Github</a></p>
 			<p><a href = "http://hsecompling.wikispaces.com/-/M16-18/%D0%92%D1%8B%D1%88%D0%BA%D0%B0.%D0%A1%D0%BB%D0%BE%D0%B2%D0%B0%D1%80%D0%B8/home">Проект на Wikispaces</a></p>
+			<p><a href="https://ling.hse.ru/">Сайт Школы лингвистики</a></p>
 			<br>
 			<h2>Участники проекта</h2>
 			<ul style="list-style-type:disc">

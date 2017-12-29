@@ -74,7 +74,7 @@ def secure_query(word):
     return word
 
 #extended search fields names
-pos_labels = [(' сущ. ','Существительное'),(' глаг. ','Глагол'), (' мест. нареч. ','Местоименное наречие'),
+pos_labels = [(' сущ. ','Существительное'),(' глаг. ','Глагол'),
               (' прил. ','Прилагательное'),(' нареч. ', 'Наречие'), (' числ. ', 'Числительное'), (' част. ','Частица'),
               (' предлог ','Предлог'), (' межд. ','Междометие')]
 gender_labels = [(' ж. ','Женский'), (' м. ','Мужской'), (' ср. ','Средний')]
@@ -314,7 +314,7 @@ def extended_search_page():
                 result = g.db.execute(
                     "SELECT orth, phon, sense, pos, gender, \
                      asp, dic_name, usg, etym_lang FROM test WHERE pos='%s' AND \
-                     dic_name LIKE '%s'" % (pos,dict)).fetchall()
+                     dic_name LIKE '%s' AND orth != 'None'" % (pos,dict)).fetchall()
             elif borrowed != [] and aspect == 'None' and gender == 'None' and marker == []:
                 result = g.db.execute(
                     "SELECT orth, phon, sense, pos, gender, \
