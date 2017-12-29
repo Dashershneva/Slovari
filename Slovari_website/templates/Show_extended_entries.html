@@ -6,17 +6,21 @@
 
 {% block extended %}
 	<h2>Результаты поиска:</h2>
+	<h5>Найдено слов: {{ length }}</h5>
 	<form method="POST" enctype="multipart/form-data">
-		<a href="{{ url_for('download', filename=filename) }}">Скачать результаты (csv)</a>
+		<a href="{{ url_for('download', filename=filename) }}" style="padding-left:10px;">Скачать результаты (csv)</a>
 	</form>
-	<br>
+	<table class="extended_table">
+		<tr>
+			<th>Словоформа</th>
+			<th style="padding-left:10px;">Значение</th>
+		</tr>
 	{% for res in result%}
-		<table>
-			<tr>
-				<td class='extended_table'>{{ res[0] }} {{ res[2] }} {{ res[3] }} {{ res[6] }} {{ res[8] }}</td>
-				<br>
-			</tr>
-		</table>	
+		<tr>
+			<td><a href="{{ url_for('show_entries', word=res[0]) }}">{{ res[0] }}</a></td>
+			<td style="padding-left:10px;">{{ res[2] }}</td>
+		</tr>	
 	{% endfor %}
+	</table>
 
 {% endblock %}

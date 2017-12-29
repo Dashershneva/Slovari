@@ -57,7 +57,10 @@
 	font-size: 14px;
 }
 .extended_table {
-	
+	padding: 10px;
+	margin: 10px;
+	font-size: 14px;
+	font-family: helvetica;
 }
 
 

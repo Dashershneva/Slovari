@@ -406,7 +406,8 @@ def extended_search_page():
                                      'dic_name':str(item[6]), 'usg':str(item[7]),
                                      'etym_lang':str(item[8])})
         csvfile.close()
-        return render_template('Show_extended_entries.html', form=form, result=result)
+        length = len(result)
+        return render_template('Show_extended_entries.html', form=form, result=result, length=length)
     return render_template('Slovar_extended_search.html', form=form)
 
 
