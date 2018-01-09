@@ -24,4 +24,4 @@
 Другое [Руководство](https://help.github.com/articles/syncing-a-fork/)
 по получению обновлений из "форкнутого" репозитория (метод merge)
 
-![alt text](https://github.com/SergeyMikhaylov21/Slovari/blob/master/Slovari_website/static/img/hse_logo.png)
+![alt text](https://github.com/SergeyMikhaylov21/Slovari/blob/master/Slovari_website/static/img/hse_logo.png =250x250)
