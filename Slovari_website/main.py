@@ -220,6 +220,7 @@ def main_page():
 
 @app.route('/Vyshka_slovari_main/<word>', methods=['POST', 'GET'])
 def show_entries(word):
+    word = word.lower()
     word = secure_query(word)
     mng1 = g.db.execute(
         "SELECT sense, dic_name FROM test WHERE orth='%s' \
