@@ -434,6 +434,10 @@ def checkUserId():
     registered = False
     email = request.form['e-mail']
     password = request.form['password']
+
+    for i in [email, password]:
+        if not validateInput(i):
+            return redirect(url_for('enter_page'))
     # print(email, password)
 
     db = open('users.csv', 'r', encoding='utf8').read().split('\n')
@@ -466,6 +470,14 @@ def validateEmail(email):
         return False
 
 
+def validateInput(line):
+    m = re.findall('[^A-Z^a-z^А-Я^а-я^0-9^_^\.]', line)
+    if m:
+        return False
+    else:
+        return True
+
+
 @app.route('/new_user', methods=['GET', 'POST'])
 def new_user():
 
@@ -486,6 +498,10 @@ def new_user():
         mistake = True
     if not validateEmail(email) :
         mistake = True
+    for i in [firstname, lastname, password, password_check]:
+        if not validateInput(i):
+            mistake = True
+            break
 
     if mistake:
         return redirect(url_for('main_page'))
