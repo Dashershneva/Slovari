@@ -69,10 +69,7 @@
 	  </div>
 		
 	  <div class="container col-md-12 info">
-        <h2>Загруженные словари</h2>
-          {% for i in current_user.get_files() %}
-          <p>{{ i }} <a href='{{ url_for("remove", filename = i) }}'>Удалить</a></p>
-          {% endfor %}
+        <h2>Словарей на модерации: {{ current_user.count_files() }}</h2>
            
 	  </div>
 	  

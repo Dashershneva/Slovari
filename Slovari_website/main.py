@@ -148,8 +148,13 @@ class User(UserMixin):
 
     def get_files(self):
         all_files = os.listdir(os.path.join(BASE_DIR, UGC_UPLOAD_FOLDER))
-        user_files = [f for f in all_files if '_uid%s'%self.id in f]
+        user_files = [f for f in all_files if 'uid%s_'%self.id in f]
         return user_files
+
+    def count_files(self):
+        all_files = os.listdir(os.path.join(BASE_DIR, UGC_UPLOAD_FOLDER))
+        user_files = [f for f in all_files if 'uid%s_'%self.id in f]
+        return len(user_files)
 
 
 
@@ -584,7 +589,7 @@ def uploadSlov():
         else:
             os.remove(os.path.join(UGC_UPLOAD_FOLDER, new_fname))
             print(os.listdir(UGC_UPLOAD_FOLDER))
-            return render_template('cabinet.html', mistake='Что-то не так с файлом: %s'%is_valid[1])
+            return render_template('cabinet.html', mistake='Словарь не прошёл валидацию. Попробуйте другой.')
 
 
 if __name__ == "__main__":
