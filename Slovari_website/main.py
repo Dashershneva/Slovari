@@ -43,7 +43,7 @@ login_manager.login_view = 'login'
 @login_manager.user_loader
 def load_user(userid):
     from models import User
-    f = open('users.csv', 'r', encoding='utf8').read().split('\n')
+    f = open(users_path, 'r', encoding='utf8').read().split('\n')
     for line in f:
         line = line.split(';')
         uid = int(line[0])
@@ -165,7 +165,7 @@ def load_user(user_id):
     user_id = str(user_id)
     uid, firstname, lastname, email = '', '', '', ''
 
-    f = open('users.csv', 'r', encoding='utf8').read().split('\n')
+    f = open(users_path, 'r', encoding='utf8').read().split('\n')
     for line in f:
         line = line.split(';')
         if line[0] == user_id:
@@ -187,7 +187,7 @@ def load_user(user_id):
 def before_first_request():
     ld = os.listdir(os.getcwd())
     # if 'users.csv' not in ld:
-    #     f = open('users.csv', 'w', encoding='utf8')
+    #     f = open(users_path, 'w', encoding='utf8')
     #     f.write('id;name;lname;email;password')
     #     f.close()
     # else:
@@ -198,7 +198,7 @@ def before_first_request():
     # else:
     #     pass
     #     # print('users folder located')
-    # f = open('users.csv', 'r', encoding='utf8')
+    # f = open(users_path, 'r', encoding='utf8')
     # for line in f:
     #     uid = line.split(';')[0]
     #     if uid != 'id':
@@ -447,7 +447,7 @@ def checkUserId():
         # return redirect(url_for('enter_page'))
         return render_template('Slovar_enter.html', mistake = 'Неверный формат email')
 
-    db = open('users.csv', 'r', encoding='utf8').read().split('\n')
+    db = open(users_path, 'r', encoding='utf8').read().split('\n')
     for line in db:
         if line == '':
             pass
@@ -490,7 +490,7 @@ def validateInput(line):
 @app.route('/new_user', methods=['GET', 'POST'])
 def new_user():
 
-    f = open('users.csv', 'r', encoding='utf8').read().split('\n')[1:]
+    f = open(users_path, 'r', encoding='utf8').read().split('\n')[1:]
     try:
         last_id = int(f[-1].split(';')[0])
     except:
