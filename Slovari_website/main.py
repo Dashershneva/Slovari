@@ -515,7 +515,11 @@ def new_user():
         f.write('\n'+nu)
         f.close()
 
-        os.mkdir('users/%s'%new_id)
+        try:
+            os.mkdir('users/%s'%new_id)
+        except Exception as e:
+            os.rmdir('users/%s'%new_id)
+            os.mkdir('users/%s'%new_id)
         u = User(email, new_id, firstname, lastname)
         login_user(u)
 
