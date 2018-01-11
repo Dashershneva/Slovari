@@ -186,7 +186,7 @@ def before_first_request():
         pass
         # print('users.csv located')
     if 'users' not in ld:
-        os.mkdir('users')
+        os.mkdir(os.path.abspath(os.getcwd(), 'users'))
     else:
         pass
         # print('users folder located')
@@ -195,7 +195,7 @@ def before_first_request():
         uid = line.split(';')[0]
         if uid != 'id':
             try:
-                os.mkdir('users/%s'%uid)
+                os.mkdir(os.path.abspath(os.getcwd(), 'users/%s'%uid))
             except Exception as e:
                 print('user %s folder exists'%uid)
 
@@ -516,10 +516,10 @@ def new_user():
         f.close()
 
         try:
-            os.mkdir('users/%s'%new_id)
+            os.mkdir(os.path.abspath(os.getcwd(), 'users/%s'%new_id))
         except Exception as e:
-            os.rmdir('users/%s'%new_id)
-            os.mkdir('users/%s'%new_id)
+            os.rmdir(os.path.abspath(os.getcwd(), 'users/%s'%new_id))
+            os.mkdir(os.path.abspath(os.getcwd(), 'users/%s'%new_id))
         u = User(email, new_id, firstname, lastname)
         login_user(u)
 
