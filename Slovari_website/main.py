@@ -16,15 +16,17 @@ from flask_login import LoginManager, current_user, login_required, login_user, 
 from werkzeug import secure_filename
 import shutil
 import os.path
+import string, random
 
 UPLOAD_FOLDER = 'csv_result'
+UGC_UPLOAD_FOLDER = 'users'
 ALLOWED_EXTENSIONS = set(['csv'])
 BASE_DIR = os.path.dirname(__file__)
 db_path = os.path.join(BASE_DIR, 'slovari.db')
 csv_path = os.path.join(BASE_DIR, 'csv_result/results.csv')
 scheme_path = os.path.join(BASE_DIR, 'scheme.xsd')
 users_path = os.path.join(BASE_DIR, 'users.csv')
-users_dir_path = 'users'
+# users_dir_path = 'users'
 folder_path = os.path.join(BASE_DIR, 'csv_result/')
 
 app = Flask(__name__)
@@ -132,7 +134,6 @@ class User(UserMixin):
         self.id = uid
         self.active = active
 
-
     def is_authenticated():
         return True
 
@@ -146,8 +147,10 @@ class User(UserMixin):
         return self.id
 
     def get_files(self):
-        d = os.path.join('users', self.id)
-        return os.listdir(d)
+        all_files = os.listdir(os.path.join(BASE_DIR, UGC_UPLOAD_FOLDER))
+        user_files = [f for f in all_files if '_uid%s'%self.id in f]
+        return user_files
+
 
 
 
@@ -178,26 +181,26 @@ def load_user(user_id):
 @app.before_first_request
 def before_first_request():
     ld = os.listdir(os.getcwd())
-    if 'users.csv' not in ld:
-        f = open('users.csv', 'w', encoding='utf8')
-        f.write('id;name;lname;email;password')
-        f.close()
-    else:
-        pass
-        # print('users.csv located')
-    if 'users' not in ld:
-        os.mkdir(os.path.join(os.getcwd(), 'users'))
-    else:
-        pass
-        # print('users folder located')
-    f = open('users.csv', 'r', encoding='utf8')
-    for line in f:
-        uid = line.split(';')[0]
-        if uid != 'id':
-            try:
-                os.mkdir(os.path.join(os.getcwd(), 'users/%s'%uid))
-            except Exception as e:
-                print('user %s folder exists'%uid)
+    # if 'users.csv' not in ld:
+    #     f = open('users.csv', 'w', encoding='utf8')
+    #     f.write('id;name;lname;email;password')
+    #     f.close()
+    # else:
+    #     pass
+    #     # print('users.csv located')
+    # if 'users' not in ld:
+    #     os.mkdir(os.path.join(os.getcwd(), 'users'))
+    # else:
+    #     pass
+    #     # print('users folder located')
+    # f = open('users.csv', 'r', encoding='utf8')
+    # for line in f:
+    #     uid = line.split(';')[0]
+    #     if uid != 'id':
+    #         try:
+    #             os.mkdir(os.path.join(os.getcwd(), 'users/%s'%uid))
+    #         except Exception as e:
+    #             print('user %s folder exists'%uid)
 
 
 
@@ -435,10 +438,9 @@ def checkUserId():
     email = request.form['e-mail']
     password = request.form['password']
 
-    for i in [email, password]:
-        if not validateInput(i):
-            return redirect(url_for('enter_page'))
-    # print(email, password)
+    if not validateEmail(email):
+        # return redirect(url_for('enter_page'))
+        return render_template('Slovar_enter.html', mistake = 'Неверный формат email')
 
     db = open('users.csv', 'r', encoding='utf8').read().split('\n')
     for line in db:
@@ -459,7 +461,9 @@ def checkUserId():
         return redirect(url_for('main_page'))
     else:
         uid =  None
-        return redirect(url_for('enter_page'))
+        # print('bad pair login\pw')
+        # return redirect(url_for('enter_page'))
+        return render_template('Slovar_enter.html', mistake = 'Проверьте правильность логина и пароля')
 
 
 def validateEmail(email):
@@ -493,18 +497,19 @@ def new_user():
     password = request.form['password']
     password_check = request.form['password_check']
 
-    mistake = False
+    mistake = None
     if password != password_check:
-        mistake = True
+        mistake = 'Пароли не совпадают'
     if not validateEmail(email) :
-        mistake = True
+        mistake = 'Неверный формат email'
     for i in [firstname, lastname, password, password_check]:
         if not validateInput(i):
-            mistake = True
+            mistake = 'Недопустимые символы'
             break
 
     if mistake:
-        return redirect(url_for('main_page'))
+        # return redirect(url_for('main_page'))
+        return render_template('Slovar_register.html', mistake=mistake)
 
     else:
         nu = '%s;%s;%s;%s;%s'%(new_id, firstname, lastname, email, password)
@@ -515,11 +520,6 @@ def new_user():
         f.write('\n'+nu)
         f.close()
 
-        try:
-            os.mkdir(os.path.join(os.getcwd(), 'users/%s'%new_id))
-        except Exception as e:
-            os.rmdir(os.path.join(os.getcwd(), 'users/%s'%new_id))
-            os.mkdir(os.path.join(os.getcwd(), 'users/%s'%new_id))
         u = User(email, new_id, firstname, lastname)
         login_user(u)
 
@@ -564,30 +564,28 @@ def validate_slov(fname, SCHEME_FILE=scheme_path):
     return is_valid, error, name
 
 
+def idGen():
+    s = string.ascii_letters + string.digits
+    return ''.join([random.choice(s) for _ in range(0,24)])
+
+
 @app.route("/upload_slov", methods=['GET', 'POST'])
 def uploadSlov():
     if request.method == 'POST':
         f = request.files['file']
-        f.save(os.path.join(UPLOAD_FOLDER ,f.filename))
+        new_fname = 'uid%s_%s_%s'%( current_user.id, idGen(), f.filename)
+        f.save(os.path.join(BASE_DIR, UGC_UPLOAD_FOLDER, new_fname))
 
-        is_valid = validate_slov(os.path.join(UPLOAD_FOLDER, f.filename))
+        is_valid = validate_slov(os.path.join(UGC_UPLOAD_FOLDER, new_fname))
 
         if is_valid[0]:
-            shutil.move(os.path.join(UPLOAD_FOLDER, f.filename), 'users/%s'%current_user.id)
+            # shutil.move(os.path.join(BASE_DIR, UGC_UPLOAD_FOLDER))
             return redirect(url_for('cabinet'))
         else:
-            os.remove(os.path.join(UPLOAD_FOLDER, f.filename))
+            os.remove(os.path.join(UGC_UPLOAD_FOLDER, new_fname))
+            print(os.listdir(UGC_UPLOAD_FOLDER))
             return render_template('cabinet.html', mistake='Что-то не так с файлом: %s'%is_valid[1])
-
-
-@app.route('/remove/<filename>', methods=['GET', 'POST'])
-def remove(filename):
-    # if request.method == 'POST':
-    f = os.remove(os.path.join('users', current_user.id, filename))
-    return redirect(url_for('cabinet'))
-
 
 
 if __name__ == "__main__":
     app.run(debug=True)
-    # print(__file__)
