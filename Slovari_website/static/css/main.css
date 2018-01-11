@@ -29,10 +29,16 @@
 	border-color: #4cae4c;
 }
 .info {
-	font-size: 22px;
+	font-size: 18px;
 	padding: 30px 15px;
 	margin-bottom: 30px;
 	text-align: justify;
+	font-family: Helvetica;
+}
+.btn-hse {
+  color: #fff;
+  background-color: #2e5cb8;
+  border-color: #2e5cb8;
 }
 .register {
 	width: 25%;
@@ -61,7 +67,19 @@
 	padding: 10px;
 	margin: 10px;
 	font-size: 14px;
-	font-family: helvetica;
+	font-family: Helvetica;
+}
+.title {
+	font-family: Helvetica, sans-serif;
+}
+.subtitle {
+	font-family: Gill Sans, sans-serif;
+	color: #2e5cb8;
+	padding: 10px, ;
+}
+.logohse {
+	width: 250px;
+	height: 300px;
 }
 
 
