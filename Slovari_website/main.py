@@ -581,15 +581,15 @@ def uploadSlov():
         new_fname = 'uid%s_%s_%s'%( current_user.id, idGen(), f.filename)
         f.save(os.path.join(BASE_DIR, UGC_UPLOAD_FOLDER, new_fname))
 
-        is_valid = validate_slov(os.path.join(UGC_UPLOAD_FOLDER, new_fname))
+        is_valid = validate_slov(os.path.join(BASE_DIR, UGC_UPLOAD_FOLDER, new_fname))
 
         if is_valid[0]:
             # shutil.move(os.path.join(BASE_DIR, UGC_UPLOAD_FOLDER))
             return redirect(url_for('cabinet'))
         else:
-            os.remove(os.path.join(UGC_UPLOAD_FOLDER, new_fname))
+            os.remove(os.path.join(BASE_DIR, UGC_UPLOAD_FOLDER, new_fname))
             print(os.listdir(UGC_UPLOAD_FOLDER))
-            return render_template('cabinet.html', mistake='Словарь не прошёл валидацию. Попробуйте другой.')
+            return render_template('cabinet.html', mistake='К сожалению, Ваш словарь не прошел валидацию :(')
 
 
 if __name__ == "__main__":
