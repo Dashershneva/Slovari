@@ -588,7 +588,7 @@ def uploadSlov():
             return redirect(url_for('cabinet'))
         else:
             os.remove(os.path.join(BASE_DIR, UGC_UPLOAD_FOLDER, new_fname))
-            print(os.listdir(UGC_UPLOAD_FOLDER))
+            # print(os.listdir(BASE_DIR, UGC_UPLOAD_FOLDER))
             return render_template('cabinet.html', mistake='К сожалению, Ваш словарь не прошел валидацию :(')
 
 
