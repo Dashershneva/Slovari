@@ -260,6 +260,10 @@ def show_entries(word):
         "SELECT examp, dic_name FROM test WHERE orth='%s' \
         AND dic_name='Толковый словарь Кузнецова'" % word).fetchall()
 
+    print(word, syn, ant, epith)
+
+    mng1 = handle_exception(mng1)
+    mng2 = handle_exception(mng2)
     ant = handle_exception(ant)
     syn = handle_exception(syn)
     epith = handle_exception(epith)
@@ -271,6 +275,8 @@ def show_entries(word):
     gen = handle_gram(gen)
     asp = handle_gram(asp)
     gov = handle_gram(gov)
+
+    print(mng1, word, syn, ant, epith, asp)
 
     return render_template('Show_entries.html',
                            word=word,

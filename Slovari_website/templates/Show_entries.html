@@ -2,11 +2,12 @@
 
 {% block content %}
 	<h2>Результаты поиска: {{ word }}</h2>
-	{% if meaning1 or meaning2 or part_of_speech or gender or aspect or govern or stress %}
+	{% if meaning1 or meaning2 or stress %}
 		<div class="col-md-6">
+		{% if meaning2[0][0]!='Нет информации' or meaning1[0][0]!='Нет информации' %}
 			<div class="card">
 				<h3>Значение:</h3>
-				{% if meaning2 and meaning1 %}
+				{% if meaning2[0][0]!='Нет информации' and meaning1[0][0]!='Нет информации' %}
 					{% for meaning in meaning2 %}
 						<p>{{ meaning[0] }}</p>
 					{% endfor %}
@@ -26,13 +27,13 @@
 					{% endfor %}
 						<p style="float:right;">{{ meaning1[0][1] }}</p>
 					</div>		
-				{% elif meaning2 %}
+				{% elif meaning2[0][0]!='Нет информации' and meaning1[0][0]=='Нет информации' %}
 					{% for meaning in meaning2 %}
 						<p>{{ meaning[0] }}</p>
 					{% endfor %}
 						<p style="float:right;">{{ meaning2[0][1] }}</p>
 				<br>
-				{% elif meaning1 %}
+				{% elif meaning1[0][0]!='Нет информации' and meaning2[0][0]!='Нет информации' %}
 					{% for meaning in meaning1 %}
 						<p>{{ meaning[0] }}</p>
 					{% endfor %}
@@ -40,36 +41,42 @@
 				{% endif %}
 				<br>
 			</div>
-			{% if part_of_speech or gender or aspect or govern %}
+			{% if example[0][0]!='Нет информации' %}
 				<div class="card">
 					<h3>Примеры употребления:</h3>
                         <p>{{ example[0][0] }}</p>
 				</div>
+			{% endif%}
+		{% endif %}
+		{% if stress[0][0]!='Нет информации'%}
+			<div class="card">
+				<h3>Ударение:</h3>
+                       <p>{{ stress[0][0] }}</p>
+			</div>
+			
+		{% endif %}
+		</div>
+	{% endif %}
+	{% if antonyms or synonyms or epithets or etymology or usage or part_of_speech or gender or aspect or govern %}
+		<div class="col-md-6">
+		{% if part_of_speech[0]!=' — ' or gender[0]!=' — ' or aspect[0]!=' — ' or govern[0]!=' — ' %}
 				<div class="card">
 					<h3>Грамматическая информация:</h3>
-					{% if part_of_speech %}
+					{% if part_of_speech[0]!=' — ' %}
 						<p> Часть речи: {{ part_of_speech[0] }}</p>
 					{% endif %}
-					{% if gender %}
+					{% if gender[0]!=' — ' %}
 						<p> Род: {{ gender[0] }}</p>
 					{% endif %}
-					{% if aspect %}
+					{% if aspect[0]!=' — ' %}
 						<p> Вид: {{ aspect[0] }}</p>
 					{% endif %}
-					{% if govern %}
+					{% if govern[0]!=' — ' %}
 						<p> Управление: {{ govern[0] }}</p>
 					{% endif %}
 				</div>
-				<div class="card">
-					<h3>Ударение:</h3>
-                        <p>{{ stress[0][0] }}</p>
-				</div>
 			{% endif %}
-		</div>
-	{% endif %}
-	{% if antonyms or synonyms or epithets or etymology or usage %}
-		<div class="col-md-6">
-		{% if antonyms %}
+		{% if antonyms[0][0]!='Нет информации' %}
 			<div class="card">
 				<h3>Антонимы:</h3>
 				<p>{{ antonyms[0][0] }}</p>
@@ -77,7 +84,7 @@
 				<br>
 			</div>
 		{% endif %}
-		{% if synonyms %}
+		{% if synonyms[0][0]!='Нет информации' %}
 			<div class="card">
 				<h3>Синонимы:</h3>
 				<p>{{ synonyms[0][0] }}</p>
@@ -85,7 +92,7 @@
 				<br>
 			</div>
 		{% endif %}
-		{% if epithets %}
+		{% if epithets[0][0]!='Нет информации' %}
 			<div class="card">
 				<h3>Эпитеты:</h3>
 				<p>{{ epithets[0][0] }}</p>
@@ -93,7 +100,7 @@
 				<br>
 			</div>
 		{% endif %}
-		{% if etymology %}
+		{% if etymology[0][0]!='Нет информации' %}
 			<div class="card">
 				<h3>Этимология:</h3>
 				<p>{{ etymology[0][0] }}</p>
@@ -101,7 +108,7 @@
 				<br>
 			</div>
 		{% endif %}
-		{% if usage %}
+		{% if usage[0][0]!='Нет информации' %}
 			<div class="card">
 				<h3>Пометы:</h3>
 				<p>{{ usage[0][0] }}</p>
