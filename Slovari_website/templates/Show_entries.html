@@ -2,6 +2,9 @@
 
 {% block content %}
 	<h2>Результаты поиска: {{ word }}</h2>
+	{% if meaning2[0][0]=='Нет информации' and usage[0][0]=='Нет информации' and etymology[0][0]=='Нет информации' and epithets[0][0]=='Нет информации' and meaning1[0][0]=='Нет информации' and synonyms[0][0]=='Нет информации' and antonyms[0][0]=='Нет информации' and example[0][0]=='Нет информации' and part_of_speech[0]==' — ' and gender[0]==' — ' and aspect[0]==' — ' and govern[0]==' — ' and  stress[0][0]=='Нет информации' %}
+		<p>По вашему запросу ничего не найдено :(</p>
+	{% endif %}
 	{% if meaning1 or meaning2 or stress %}
 		<div class="col-md-6">
 		{% if meaning2[0][0]!='Нет информации' or meaning1[0][0]!='Нет информации' %}

@@ -6,6 +6,10 @@
 
 {% block extended %}
 	<h2>Результаты поиска:</h2>
+	{% if result==['По вашему запросу ничего не найдено :('] %}
+	<p>{{ result[0] }}</p>
+	{% endif%}
+	{% if result!=['По вашему запросу ничего не найдено :('] %}
 	<h5>Найдено слов: {{ length }}</h5>
 	<form method="POST" enctype="multipart/form-data">
 		<a href="{{ url_for('download', filename=filename) }}" style="padding-left:10px;">Скачать результаты (csv)</a>
@@ -22,5 +26,6 @@
 		</tr>	
 	{% endfor %}
 	</table>
+	{% endif %}
 
 {% endblock %}
