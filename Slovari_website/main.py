@@ -301,6 +301,10 @@ def about_page():
 @app.route("/Vyshka_slovari_dictionaries")
 def about_dict():
     return render_template('Dictionaries.html')
+	
+@app.route("/Vyshka_slovari_how_search_works")
+def how_search_works():
+	return render_template('Slovar_how_search_works.html')
 
 def allowed_file(filename):
     return '.' in filename and \
