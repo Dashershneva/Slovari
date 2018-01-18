@@ -48,7 +48,7 @@
 	  
 	  <div class="container" class="col-md-12">
 	      <div class="info">
-		    <h2>Вход</h2>
+		    <h2 style="font-family:Verdana;">Вход</h2>
             <p>Войдите, чтобы добавить новый словарь. Если у вас еще нет аккаунта, <a href="{{ url_for('register_page') }}">зарегистрируйтесь</a></p>
 			{% if mistake %}
 				<p style="color:red">{{ mistake }}</p>
@@ -59,8 +59,8 @@
 		      <br>
 		      Пароль<br>
 		      <input class="searchfield register" type="password" name="password" placeholder="Введите пароль">
-		      <br><br>
-		      <input class="btn btn-hse" type="submit" value="Войти">
+			  <br>
+		      <input class="btn btn-hse" type="submit" value="Войти" style="margin:5px;">
 		    </form>
 		  </div>
 	  </div>

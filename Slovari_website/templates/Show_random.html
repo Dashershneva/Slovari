@@ -8,5 +8,6 @@
 			<p>{{ rand_word[0][4] }}<p>
 			<p style="float:right;">{{ rand_word[0][14] }}</p>
 		</div>
+		<a href="{{ url_for('show_entries', word=rand_word[0][1]) }}" style="float:right;padding-right:10px;">Подробная информация о слове</a>
 	</div>
 {% endblock %}

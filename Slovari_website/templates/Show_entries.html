@@ -1,8 +1,9 @@
 {%extends "Slovar_main.html"%}
 
 {% block content %}
+	<div class="container" style="font-family:Verdana;">
 	<h2>Результаты поиска: {{ word }}</h2>
-	{% if meaning2[0][0]=='Нет информации' and usage[0][0]=='Нет информации' and etymology[0][0]=='Нет информации' and epithets[0][0]=='Нет информации' and meaning1[0][0]=='Нет информации' and synonyms[0][0]=='Нет информации' and antonyms[0][0]=='Нет информации' and example[0][0]=='Нет информации' and part_of_speech[0]==' — ' and gender[0]==' — ' and aspect[0]==' — ' and govern[0]==' — ' and  stress[0][0]=='Нет информации' %}
+	{% if meaning2[0][0]=='Нет информации' and usage[0][0]=='Нет информации' and etymology[0][0]=='Нет информации' and epithets[0][1]=='—' and meaning1[0][0]=='Нет информации' and synonyms[0][1]=='—' and antonyms[0][1]=='—' and example[0][0]=='Нет информации' and part_of_speech[0]==' — ' and gender[0]==' — ' and aspect[0]==' — ' and govern[0]==' — ' and  stress[0][0]=='Нет информации' %}
 		<p>По вашему запросу ничего не найдено :(</p>
 	{% endif %}
 	{% if meaning1 or meaning2 or stress %}
@@ -24,25 +25,25 @@
 							}
 					</script>
 
-						<br>
 					{% for meaning in meaning1 %}
 						<p>{{ meaning[0] }}</p>
 					{% endfor %}
 						<p style="float:right;">{{ meaning1[0][1] }}</p>
+						<br>
 					</div>		
 				{% elif meaning2[0][0]!='Нет информации' and meaning1[0][0]=='Нет информации' %}
 					{% for meaning in meaning2 %}
 						<p>{{ meaning[0] }}</p>
 					{% endfor %}
 						<p style="float:right;">{{ meaning2[0][1] }}</p>
-				<br>
+						<br>
 				{% elif meaning1[0][0]!='Нет информации' and meaning2[0][0]!='Нет информации' %}
 					{% for meaning in meaning1 %}
 						<p>{{ meaning[0] }}</p>
 					{% endfor %}
-						<p style="float:right;">{{ meaning1[0][1] }}</p>		
+						<p style="float:right;">{{ meaning1[0][1] }}</p>
+						<br>						
 				{% endif %}
-				<br>
 			</div>
 			{% if example[0][0]!='Нет информации' %}
 				<div class="card">
@@ -79,26 +80,26 @@
 					{% endif %}
 				</div>
 			{% endif %}
-		{% if antonyms[0][0]!='Нет информации' %}
+		{% if antonyms[0][1]!='—' %}
 			<div class="card">
 				<h3>Антонимы:</h3>
-				<p>{{ antonyms[0][0] }}</p>
+				<p>{% for ant in antonyms[0][0] %}<a href="{{ url_for('show_entries', word=ant) }}">{{ ant }}</a>{% if ant!=antonyms[0][0][-1] %}, {% endif %}{% endfor %}</p>
 				<p style="float:right;">{{ antonyms[0][1] }}</p>
 				<br>
 			</div>
 		{% endif %}
-		{% if synonyms[0][0]!='Нет информации' %}
+		{% if synonyms[0][1]!='—' %}
 			<div class="card">
 				<h3>Синонимы:</h3>
-				<p>{{ synonyms[0][0] }}</p>
+				<p>{% for syn in synonyms[0][0] %}<a href="{{ url_for('show_entries', word=syn) }}">{{ syn }}</a>{% if syn!=synonyms[0][0][-1] %}, {% endif %}{% endfor %}</p>
 				<p style="float:right;">{{ synonyms[0][1] }}</p>
 				<br>
 			</div>
 		{% endif %}
-		{% if epithets[0][0]!='Нет информации' %}
+		{% if epithets[0][1]!='—' %}
 			<div class="card">
 				<h3>Эпитеты:</h3>
-				<p>{{ epithets[0][0] }}</p>
+				{% for epith in epithets[0][0] %}<a href="{{ url_for('show_entries', word=epith) }}">{{ epith }}</a> {% if epith!=epithets[0][0][-1] %}, {% endif %}{% endfor %}
 				<p style="float:right;">{{ epithets[0][1] }}</p>
 				<br>
 			</div>
@@ -121,5 +122,6 @@
 		{% endif %}
 		</div>
 	{% endif %}
+	</div>
 
 {% endblock %}

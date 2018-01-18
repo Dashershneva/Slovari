@@ -46,38 +46,33 @@
       </div>
     </nav>
 	
-	<div class="container">
-	  <div class="col-md-12">
-        <h2>{{ current_user.firstname }} {{ current_user.lastname }}</h2>
+	<div class="container" style="margin:0px 60px;">
+	  <div class="col-md-12 info">
+	    <h1 class="title">Личный кабинет</h1>
+        <h3>{{ current_user.firstname }} {{ current_user.lastname }}</h3>
         <h3>{{ current_user.email }}</h3>
-      </div>
-	  
-	  <div class="container">
-	    <div class="info col-md-6 info"> 
-        <h2>Загрузить словарь в формате TEI</h2>
-        <form action="{{ url_for('uploadSlov') }}"  enctype="multipart/form-data" method="POST">
-          <input class="btn" type="file" name="file"><input class="btn" id="post_btn" type="submit" name="upload_slov" value="Загрузить словарь">
+	    <h1 class="subtitle">Загрузить словарь в формате TEI</h1>
+	    <div class="col-md-6"> 
+          <form action="{{ url_for('uploadSlov') }}"  enctype="multipart/form-data" method="POST" class="upload">
+            <input class="btn" type="file" name="file"><br>
+			<input class="btn" id="post_btn" type="submit" name="upload_slov" value="Загрузить словарь">
           </form>           {{ mistake }}
-		</div>
+	    </div>
 	    <div class="col-md-6 info">
+		  <a href="{{ url_for('instruction', filename=filename) }}" target="_blank" style="float:left;">Скачать инструкцию по разметке</a>
 		  <br>
-		  <br>
-		  <a href="{{ url_for('instruction', filename=filename) }}" target="_blank">Скачать инструкцию по разметке</a>
-		  <br>
-		  <a href="{{ url_for('template', filename=filename) }}">Скачать TEI шаблон</a>
+		  <a href="{{ url_for('template', filename=filename) }}" style="float:left;">Скачать TEI шаблон</a>
 	    </div>
 	  </div>
-		
-	  <div class="container col-md-12 info">
-        <h2>Словарей на модерации: {{ current_user.count_files() }}</h2>
-           
+	  <div class="col-md-12">
+	    <h2>Словарей на модерации: {{ current_user.count_files() }}</h2>
 	  </div>
-	  
+	</div>
+			  
 	  <hr>
 
       <footer>
 
       </footer>
-    </div>
     </body>
 </html>

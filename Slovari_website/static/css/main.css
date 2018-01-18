@@ -22,6 +22,7 @@
 	margin: 3px;
 	padding-bottom: 3px;
 	padding-top: 3px;
+	font-family: Verdana;
 }
 .searchbar-find {
 	color: #fff;
@@ -33,7 +34,7 @@
 	padding: 30px 15px;
 	margin-bottom: 30px;
 	text-align: justify;
-	font-family: Helvetica;
+	font-family: Verdana;
 }
 .btn-hse {
   color: #fff;
@@ -49,16 +50,21 @@
 	float: right;
 }
 .extended_searchbar {
-	background-color: #F8E0E6;
+	background-color: #C8D5EC;
 	padding: 10px;
 	border-radius: 7px;
+	font-family: Verdana;
 }
 .card {
-	background-color: #F8E0E6;
+	background-color: #C8D5EC;
 	border-radius: 7px;
 	margin: 10px;
-	padding: 5px;
+	padding-left: 10px;
+	padding-right: 10px;
+	padding-bottom: 10px;
+	padding-top: 5px;
 	text-align: justify;
+	font-family: Verdana;
 }
 .search {
 	font-size: 14px;
@@ -67,13 +73,14 @@
 	padding: 10px;
 	margin: 10px;
 	font-size: 14px;
-	font-family: Helvetica;
+	font-family: Verdana;
 }
 .title {
-	font-family: Helvetica, sans-serif;
+	font-size: 52px;
+	font-family: Ubuntu;
 }
 .subtitle {
-	font-family: Gill Sans, sans-serif;
+	font-family: Ubuntu;
 	color: #2e5cb8;
 	padding: 10px, ;
 }
@@ -81,7 +88,29 @@
 	width: 250px;
 	height: 300px;
 }
-
+.dict_image {
+	width: 250px; 
+	height: 300px;
+}
+.tag_table {
+	border: 1px solid #2e5cb8;
+	width: 100%;
+	text-align: center;
+	table-layout:fixed;
+	padding: 5px;
+}
+tr, td {
+	border: inherit;
+}
+.markers {
+	list-style-type: square;
+}
+.upload {
+	border: 1px solid #C8D5EC;
+	border-radius: 7px;
+	padding: 10px;
+	margin-top: 25px;
+}
 
 
 
