@@ -3,7 +3,7 @@
 {% block content %}
 	<div class="container" style="font-family:Verdana;">
 	<h2>Результаты поиска: {{ word }}</h2>
-	{% if meaning2[0][0]=='Нет информации' and usage[0][0]=='Нет информации' and etymology[0][0]=='Нет информации' and epithets[0][1]=='—' and meaning1[0][0]=='Нет информации' and synonyms[0][1]=='—' and antonyms[0][1]=='—' and example[0][0]=='Нет информации' and part_of_speech[0]==' — ' and gender[0]==' — ' and aspect[0]==' — ' and govern[0]==' — ' and  stress[0][0]=='Нет информации' %}
+	{% if meaning2[0][0]=='Нет информации' and meaning3[0][0]=='Нет информации' and usage[0][0]=='Нет информации' and etymology[0][0]=='Нет информации' and epithets[0][1]=='—' and meaning1[0][0]=='Нет информации' and synonyms[0][1]=='—' and antonyms[0][1]=='—' and example[0][0]=='Нет информации' and part_of_speech[0]==' — ' and gender[0]==' — ' and aspect[0]==' — ' and reflex[0]==' — ' and govern[0]==' — ' and  stress[0][0]=='Нет информации' %}
 		<p>По вашему запросу ничего не найдено :(</p>
 	{% endif %}
 	{% if meaning1 or meaning2 or stress %}
@@ -11,7 +11,7 @@
 		{% if meaning2[0][0]!='Нет информации' or meaning1[0][0]!='Нет информации' %}
 			<div class="card">
 				<h3>Значение:</h3>
-				{% if meaning2[0][0]!='Нет информации' and meaning1[0][0]!='Нет информации' %}
+				{% if meaning2[0][0]!='Нет информации' and meaning1[0][0]!='Нет информации' and meaning3[0][0]=='Нет информации' %}
 					{% for meaning in meaning2 %}
 						<p>{{ meaning[0] }}</p>
 					{% endfor %}
@@ -24,12 +24,17 @@
 							el.style.display = (el.style.display == 'none') ? '' : 'none'
 							}
 					</script>
+					<br>
 
 					{% for meaning in meaning1 %}
 						<p>{{ meaning[0] }}</p>
 					{% endfor %}
 						<p style="float:right;">{{ meaning1[0][1] }}</p>
 						<br>
+					{% for meaning in meaning3%}
+						<p style="float:right;">{{ meaning3[0][1] }}</p>
+						<br>
+					{% endfor %}
 					</div>		
 				{% elif meaning2[0][0]!='Нет информации' and meaning1[0][0]=='Нет информации' %}
 					{% for meaning in meaning2 %}
@@ -63,7 +68,7 @@
 	{% endif %}
 	{% if antonyms or synonyms or epithets or etymology or usage or part_of_speech or gender or aspect or govern %}
 		<div class="col-md-6">
-		{% if part_of_speech[0]!=' — ' or gender[0]!=' — ' or aspect[0]!=' — ' or govern[0]!=' — ' %}
+		{% if part_of_speech[0]!=' — ' or gender[0]!=' — ' or reflex[0]!=' — ' or aspect[0]!=' — ' or govern[0]!=' — ' %}
 				<div class="card">
 					<h3>Грамматическая информация:</h3>
 					{% if part_of_speech[0]!=' — ' %}
@@ -77,6 +82,11 @@
 					{% endif %}
 					{% if govern[0]!=' — ' %}
 						<p> Управление: {{ govern[0] }}</p>
+					{% endif %}
+					{% if reflex[0]!=' — ' %}
+						<p>Залог: {{ reflex[0] }}</p>
+					{% elif part_of_speech[0]=='   глаг.   ' and reflex[0]==' — ' %}
+						<p>Залог: невозвр.</p>
 					{% endif %}
 				</div>
 			{% endif %}

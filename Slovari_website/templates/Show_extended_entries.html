@@ -22,7 +22,13 @@
 	{% for res in result%}
 		<tr>
 			<td><a href="{{ url_for('show_entries', word=res[0]) }}">{{ res[0] }}</a></td>
-			<td style="padding-left:10px;">{{ res[2] }}</td>
+			{% if res[2]!=None %}
+			  <td style="padding-left:10px;">{{ res[2] }}</td>
+			{% elif res[-1]!=None %}
+			  <td style="padding-left:10px;">{{ res[-1] }}</td>
+			{% elif res[-2]!=None %}
+			  <td style="padding-left:10px;">Антоним: {{ res[-2] }}</td>
+			{% endif %}
 		</tr>	
 	{% endfor %}
 	</table>

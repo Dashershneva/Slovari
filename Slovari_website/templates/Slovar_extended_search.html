@@ -52,6 +52,7 @@
 			<p><a href="{{ url_for('how_search_works') }}">Как работает расширенный поиск</a></p>
 		<form name="extended" class="search" action="{{ url_for('extended_search_page') }}" method='POST'>
 		  <div class="extended_searchbar row">
+		    <h4>Введите параметры запроса</h4>
 		    <div class="col-md-4">
 			  <h4>Часть речи</h4>
 			  <p>{{ form.noun_field }}</p>
@@ -62,6 +63,8 @@
 			  <p>{{ form.gender_field }}</p>
 			  <h5>Вид глагола</h5>
 			  <p>{{ form.aspect_field }}</p>
+			  <h5>Возвратность глагола <i>(under update)</i></h5>
+			  <p>{{ form.reflex_field }}</p>
 		    </div>  
 		    <div class="col-md-4">
 			  <h4>Словари</h4>
