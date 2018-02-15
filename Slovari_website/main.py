@@ -288,7 +288,7 @@ def show_entries(word):
     gov = handle_gram(gov)
     reflex = handle_gram(reflex)
 
-    print(mng1, reflex, pos, word, syn, ant, ant[0][0], epith, asp)
+    print(mng1, mng2, mng3, reflex, pos, word, syn, ant, ant[0][0], epith, asp)
 
     return render_template('Show_entries.html',
                            word=word,

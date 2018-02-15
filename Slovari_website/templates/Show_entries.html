@@ -6,12 +6,12 @@
 	{% if meaning2[0][0]=='Нет информации' and meaning3[0][0]=='Нет информации' and usage[0][0]=='Нет информации' and etymology[0][0]=='Нет информации' and epithets[0][1]=='—' and meaning1[0][0]=='Нет информации' and synonyms[0][1]=='—' and antonyms[0][1]=='—' and example[0][0]=='Нет информации' and part_of_speech[0]==' — ' and gender[0]==' — ' and aspect[0]==' — ' and reflex[0]==' — ' and govern[0]==' — ' and  stress[0][0]=='Нет информации' %}
 		<p>По вашему запросу ничего не найдено :(</p>
 	{% endif %}
-	{% if meaning1 or meaning2 or stress %}
+	{% if meaning1 or meaning2 or meaning3 or stress %}
 		<div class="col-md-6">
-		{% if meaning2[0][0]!='Нет информации' or meaning1[0][0]!='Нет информации' %}
+		{% if meaning1[0][0]!='Нет информации' or meaning2[0][0]!='Нет информации' or meaning3[0][0]!='Нет информации' %}
 			<div class="card">
 				<h3>Значение:</h3>
-				{% if meaning2[0][0]!='Нет информации' and meaning1[0][0]!='Нет информации' and meaning3[0][0]=='Нет информации' %}
+				{% if meaning2[0][0]!='Нет информации' and meaning1[0][0]!='Нет информации' and meaning3[0][0]!='Нет информации' %}
 					{% for meaning in meaning2 %}
 						<p>{{ meaning[0] }}</p>
 					{% endfor %}
@@ -32,22 +32,90 @@
 						<p style="float:right;">{{ meaning1[0][1] }}</p>
 						<br>
 					{% for meaning in meaning3%}
-						<p style="float:right;">{{ meaning3[0][1] }}</p>
+						<p>{{ meaning[0] }}</p>
 						<br>
 					{% endfor %}
-					</div>		
-				{% elif meaning2[0][0]!='Нет информации' and meaning1[0][0]=='Нет информации' %}
+						<p style="float:right;">{{ meaning3[0][1] }}</p>
+						<br>
+					</div>	
+				{% elif meaning1[0][0]!='Нет информации' and meaning2[0][0]!='Нет информации' and meaning3[0][0]=='Нет информации' %}
+					{% for meaning in meaning1 %}
+						<p>{{ meaning[0] }}</p>
+					{% endfor %}
+						<p style="float:right;">{{ meaning1[0][1] }}</p>
+						<br>
+						<a id="examples" href="#" onclick="toggle(more_examples)">Значения в других словарях</a>
+					<div id="more_examples" style="display:none">
+					<script>
+						function toggle(el) {
+							el.style.display = (el.style.display == 'none') ? '' : 'none'
+							}
+					</script>
+					<br>
+					{% for meaning in meaning2 %}
+						<p>{{ meaning[0] }}</p>
+					{% endfor %}
+					<p style="float:right;">{{ meaning2[0][1] }}</p>
+					<br>
+					</div>
+				{% elif meaning1[0][0]!='Нет информации' and meaning2[0][0]=='Нет информации' and meaning3[0][0]!='Нет информации' %}
+					{% for meaning in meaning1 %}
+						<p>{{ meaning[0] }}</p>
+					{% endfor %}
+						<p style="float:right;">{{ meaning1[0][1] }}</p>
+						<br>
+						<a id="examples" href="#" onclick="toggle(more_examples)">Значения в других словарях</a>
+					<div id="more_examples" style="display:none">
+					<script>
+						function toggle(el) {
+							el.style.display = (el.style.display == 'none') ? '' : 'none'
+							}
+					</script>
+					<br>
+					{% for meaning in meaning3 %}
+						<p>{{ meaning[0] }}</p>
+					{% endfor %}
+					<p style="float:right;">{{ meaning3[0][1] }}</p>
+					<br>
+					</div>
+				{% elif meaning1[0][0]=='Нет информации' and meaning2[0][0]!='Нет информации' and meaning3[0][0]!='Нет информации' %}
 					{% for meaning in meaning2 %}
 						<p>{{ meaning[0] }}</p>
 					{% endfor %}
 						<p style="float:right;">{{ meaning2[0][1] }}</p>
 						<br>
-				{% elif meaning1[0][0]!='Нет информации' and meaning2[0][0]!='Нет информации' %}
+						<a id="examples" href="#" onclick="toggle(more_examples)">Значения в других словарях</a>
+					<div id="more_examples" style="display:none">
+					<script>
+						function toggle(el) {
+							el.style.display = (el.style.display == 'none') ? '' : 'none'
+							}
+					</script>
+					<br>
+					{% for meaning in meaning3 %}
+						<p>{{ meaning[0] }}</p>
+					{% endfor %}
+					<p style="float:right;">{{ meaning3[0][1] }}</p>
+					<br>
+					</div>
+				{% elif meaning1[0][0]=='Нет информации' and meaning2[0][0]!='Нет информации' and meaning3[0][0]=='Нет информации' %}
+					{% for meaning in meaning2 %}
+						<p>{{ meaning[0] }}</p>
+					{% endfor %}
+					<p style="float:right;">{{ meaning2[0][1] }}</p>
+					<br>
+				{% elif meaning1[0][0]!='Нет информации' and meaning2[0][0]=='Нет информации' and meaning3[0][0]=='Нет информации' %}
 					{% for meaning in meaning1 %}
 						<p>{{ meaning[0] }}</p>
 					{% endfor %}
-						<p style="float:right;">{{ meaning1[0][1] }}</p>
-						<br>						
+					<p style="float:right;">{{ meaning1[0][1] }}</p>
+					<br>
+				{% elif meaning1[0][0]=='Нет информации' and meaning2[0][0]=='Нет информации' and meaning3[0][0]!='Нет информации' %}
+					{% for meaning in meaning3 %}
+						<p>{{ meaning[0] }}</p>
+					{% endfor %}
+					<p style="float:right;">{{ meaning3[0][1] }}</p>
+					<br>
 				{% endif %}
 			</div>
 			{% if example[0][0]!='Нет информации' %}
