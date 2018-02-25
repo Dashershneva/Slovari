@@ -231,6 +231,9 @@ def before_first_request():
     #             print('user %s folder exists'%uid)
 
 
+
+
+
 @app.before_request
 def before_request():
     g.db = sqlite3.connect(db_path)
@@ -370,96 +373,210 @@ def extended_search_page():
                 dict = dict[0]
             print(pos, gender, aspect, borrowed, marker, dict)
             if pos != 'None':
-                if aspect == 'None' and gender == 'None' and borrowed == [] and marker == []:
+                if aspect == 'None' and gender == 'None' and borrowed == [] and marker == [] and reflex == 'None':
                     result = g.db.execute(
-                        "SELECT orth, phon, sense, pos, gender, \
+                    "SELECT orth, phon, sense, pos, gender, \
                      asp, dic_name, usg, etym_lang, ant, syn FROM test WHERE pos='%s' AND \
-                     dic_name LIKE '%s' AND orth != 'None' ORDER BY orth" % (pos, dict)).fetchall()
-                elif borrowed != [] and aspect == 'None' and gender == 'None' and marker == []:
+                     dic_name LIKE '%s' AND orth != 'None' ORDER BY orth" % (pos,dict)).fetchall()
+                elif borrowed != [] and aspect == 'None' and gender == 'None' and marker == [] and reflex == 'None':
                     result = g.db.execute(
-                        "SELECT orth, phon, sense, pos, gender, \
+                    "SELECT orth, phon, sense, pos, gender, \
                      asp, dic_name, usg, etym_lang, ant, syn FROM test WHERE pos='%s' \
-                     AND etym_lang='%s' AND dic_name LIKE '%s' ORDER BY orth" % (pos, borrowed[0], dict)).fetchall()
-                elif marker != [] and aspect == 'None' and gender == 'None':
+                     AND etym_lang='%s' AND dic_name LIKE '%s' ORDER BY orth" % (pos,borrowed[0],dict)).fetchall()
+                elif marker != [] and aspect == 'None' and gender == 'None' and reflex == 'None':
                     if borrowed == []:
                         result = g.db.execute(
-                            "SELECT orth, phon, sense, pos, gender, \
+                        "SELECT orth, phon, sense, pos, gender, \
                          asp, dic_name, usg, etym_lang, ant, syn FROM test WHERE pos='%s' \
                          AND usg='%s' AND dic_name LIKE '%s' ORDER BY orth" % (pos, marker[0], dict)).fetchall()
                     else:
                         result = g.db.execute(
-                            "SELECT orth, phon, sense, pos, gender, \
+                        "SELECT orth, phon, sense, pos, gender, \
                          asp, dic_name, usg, etym_lang, ant, syn FROM test WHERE pos='%s' AND usg='%s' \
-                        AND etym_lang='%s' AND dic_name LIKE '%s' ORDER BY orth" % (
-                            pos, marker[0], borrowed[0], dict)).fetchall()
-                elif gender != 'None' and aspect == 'None':
+                        AND etym_lang='%s' AND dic_name LIKE '%s' ORDER BY orth" % (pos, marker[0], borrowed[0],dict)).fetchall()
+                elif gender != 'None' and aspect == 'None' and reflex == 'None':
                     if borrowed == [] and marker == []:
                         result = g.db.execute(
-                            "SELECT orth, phon, sense, pos, gender, \
+                        "SELECT orth, phon, sense, pos, gender, \
                          asp, dic_name, usg, etym_lang, ant, syn FROM test WHERE gender LIKE '%s' \
                          AND pos='%s' AND dic_name LIKE '%s' ORDER BY orth" % (gender, pos, dict)).fetchall()
                     elif borrowed == [] and marker != []:
                         result = g.db.execute(
-                            "SELECT orth, phon, sense, pos, ant, gender, \
+                        "SELECT orth, phon, sense, pos, ant, gender, \
                          asp, dic_name, usg, etym_lang, syn FROM test WHERE gender='%s' \
                          AND usg='%s' AND dic_name LIKE '%s' ORDER BY orth" % (gender, marker[0], dict)).fetchall()
                     elif borrowed != [] and marker == []:
                         result = g.db.execute(
-                            "SELECT orth, phon, sense, pos, gender, \
+                        "SELECT orth, phon, sense, pos, gender, \
                          asp, dic_name, usg, etym_lang, ant, syn FROM test WHERE gender='%s' \
-                         AND etym_lang='%s' AND dic_name LIKE '%s' ORDER BY orth" % (
-                            gender, borrowed[0], dict)).fetchall()
+                         AND etym_lang='%s' AND dic_name LIKE '%s' ORDER BY orth" % (gender, borrowed[0], dict)).fetchall()
                     else:
                         result = g.db.execute(
-                            "SELECT orth, phon, sense, pos, gender, \
+                        "SELECT orth, phon, sense, pos, gender, \
                          asp, dic_name, usg, etym_lang, ant, syn FROM test WHERE gender='%s' \
                          AND pos='%s' AND etym_lang='%s' AND usg='%s' \
-                          AND dic_name LIKE '%s' ORDER BY orth" % (
-                            gender, pos, borrowed[0], marker[0], dict)).fetchall()
-                elif aspect != 'None' and gender == 'None':
+                        AND dic_name LIKE '%s' ORDER BY orth" % (gender,pos,borrowed[0],marker[0], dict)).fetchall()
+                elif reflex != 'None' and aspect == 'None' and gender == 'None':
+                    if borrowed == [] and marker != []:
+                        if reflex == 'возвр.':
+                            result = g.db.execute(
+                                "SELECT orth, phon, sense, pos, gender, \
+                                 asp, dic_name, usg, etym_lang, ant, syn FROM test WHERE reflex='возвр.' AND\
+                                 etym_lang='%s' AND dic_name LIKE '%s' ORDER BY orth" % (borrowed[0], dict)).fetchall()
+                        elif reflex == 'невозвр.':
+                            result = g.db.execute(
+                                "SELECT orth, phon, sense, pos, gender, \
+                                 asp, dic_name, usg, etym_lang, ant, syn FROM test WHERE reflex IS NULL AND pos='глаг.'\
+                                 AND etym_lang='%s' AND dic_name LIKE '%s' ORDER BY orth" % (borrowed[0], dict)).fetchall()
+                    elif borrowed != [] and marker == []:
+                        if reflex == 'возвр.':
+                            result = g.db.execute(
+                                "SELECT orth, phon, sense, pos, gender, \
+                                 asp, dic_name, usg, etym_lang, ant, syn FROM test WHERE reflex='возвр.' AND \
+                                 usg='%s' AND dic_name LIKE '%s' ORDER BY orth" % (marker[0], dict)).fetchall()
+                        elif reflex == 'невозвр.':
+                            result = g.db.execute(
+                                "SELECT orth, phon, sense, pos, gender, \
+                                 asp, dic_name, usg, etym_lang, ant, syn FROM test WHERE reflex IS NULL AND pos='глаг.'\
+                                AND usg='%s' AND dic_name LIKE '%s' ORDER BY orth" % (marker[0], dict)).fetchall()
                     if borrowed == [] and marker == []:
+                        if reflex == 'возвр.':
+                            result = g.db.execute(
+                                "SELECT orth, phon, sense, pos, gender, \
+                                 asp, dic_name, usg, etym_lang, ant, syn FROM test WHERE reflex='возвр.'\
+                                 AND dic_name LIKE '%s' ORDER BY orth" % dict).fetchall()
+                        elif reflex == 'невозвр.':
+                            result = g.db.execute(
+                                "SELECT orth, phon, sense, pos, gender, \
+                                 asp, dic_name, usg, etym_lang, ant, syn FROM test WHERE reflex IS NULL AND pos='глаг.'\
+                                 AND dic_name LIKE '%s' ORDER BY orth" % dict).fetchall()
+                elif aspect != 'None' and gender == 'None':
+                    if borrowed == [] and marker == [] and reflex == 'None':
                         result = g.db.execute(
-                            "SELECT orth, phon, sense, pos, gender, \
+                        "SELECT orth, phon, sense, pos, gender, \
                          asp, dic_name, usg, etym_lang, ant, syn FROM test WHERE \
                          asp='%s' AND dic_name LIKE '%s' ORDER BY orth" % (aspect, dict)).fetchall()
-                    elif borrowed != [] and marker == []:
+                    elif borrowed == [] and marker == [] and reflex != 'None':
+                        if reflex == 'возвр.':
+                            result = g.db.execute(
+                                "SELECT orth, phon, sense, pos, gender, \
+                                 asp, dic_name, usg, etym_lang, ant, syn FROM test WHERE reflex='возвр.' AND \
+                                 asp='%s' AND dic_name LIKE '%s' ORDER BY orth" % (aspect, dict)).fetchall()
+                        elif reflex == 'невозвр.':
+                            result = g.db.execute(
+                                "SELECT orth, phon, sense, pos, gender, \
+                                 asp, dic_name, usg, etym_lang, ant, syn FROM test WHERE pos='глаг.' AND \
+                                 reflex IS NULL AND asp='%s' AND dic_name LIKE '%s' ORDER BY orth" % (aspect, dict)).fetchall()
+                    elif borrowed != [] and marker == [] and reflex == 'None':
                         result = g.db.execute(
-                            "SELECT orth, phon, sense, pos, gender, \
+                        "SELECT orth, phon, sense, pos, gender, \
                          asp, dic_name, usg, etym_lang, ant, syn FROM test WHERE  \
                          asp='%s' AND etym_lang='%s' AND dic_name LIKE '%s' ORDER BY orth"
-                            % (aspect, borrowed[0], dict)).fetchall()
-                    elif borrowed == [] and marker != []:
+                        % (aspect,borrowed[0],dict)).fetchall()
+                    elif borrowed != [] and marker == [] and reflex != 'None':
+                        if reflex == 'возвр.':
+                            result = g.db.execute(
+                                "SELECT orth, phon, sense, pos, gender, \
+                                 asp, dic_name, usg, etym_lang, ant, syn FROM test WHERE reflex='возвр.' AND \
+                                 asp='%s' AND etym_lang='%s' AND dic_name LIKE '%s' ORDER BY orth" % (aspect,borrowed[0],dict)).fetchall()
+                        elif reflex == 'невозвр.':
+                            result = g.db.execute(
+                                "SELECT orth, phon, sense, pos, gender, \
+                                 asp, dic_name, usg, etym_lang, ant, syn FROM test WHERE pos='глаг.' AND \
+                                 reflex IS NULL AND asp='%s' AND etym_lang='%s' AND dic_name LIKE '%s' ORDER BY orth"
+                        % (aspect,borrowed[0],dict)).fetchall()
+                    elif borrowed == [] and marker != [] and reflex == 'None':
                         result = g.db.execute(
-                            "SELECT orth, phon, sense, pos, gender, \
+                        "SELECT orth, phon, sense, pos, gender, \
                          asp, dic_name, usg, etym_lang, ant, syn FROM test WHERE \
-                        asp='%s' AND usg='%s' AND dic_name LIKE '%s' ORDER BY orth" % (
-                            aspect, marker[0], dict)).fetchall()
+                        asp='%s' AND usg='%s' AND dic_name LIKE '%s' ORDER BY orth" % (aspect,marker[0],dict)).fetchall()
+                    elif borrowed == [] and marker != [] and reflex != 'None':
+                        if reflex == 'возвр.':
+                            result = g.db.execute(
+                                "SELECT orth, phon, sense, pos, gender, \
+                         asp, dic_name, usg, etym_lang, ant, syn FROM test WHERE reflex='возвр.' AND \
+                        asp='%s' AND usg='%s' AND dic_name LIKE '%s' ORDER BY orth" % (aspect,marker[0],dict)).fetchall()
+                        elif reflex == 'невозвр.':
+                            result = g.db.execute(
+                                "SELECT orth, phon, sense, pos, gender, \
+                         asp, dic_name, usg, etym_lang, ant, syn FROM test WHERE pos='глаг.' AND reflex IS NULL AND \
+                        asp='%s' AND usg='%s' AND dic_name LIKE '%s' ORDER BY orth" % (aspect,marker[0],dict)).fetchall()
                     else:
-                        result = g.db.execute(
-                            "SELECT orth, phon, sense, pos, gender, \
-                         asp, dic_name, usg, etym_lang, ant, syn FROM test WHERE \
-                         asp='%s' AND usg='%s' AND etym_lang='%s' \
-                        AND dic_name LIKE '%s' ORDER BY orth" % (aspect, marker[0], borrowed[0], dict)).fetchall()
-            elif borrowed != [] and pos == 'None' and gender == 'None' and aspect == 'None':
+                        if reflex == 'None':
+                            result = g.db.execute(
+                                "SELECT orth, phon, sense, pos, gender, \
+                                 asp, dic_name, usg, etym_lang, ant, syn FROM test WHERE \
+                                 asp='%s' AND usg='%s' AND etym_lang='%s' \
+                                AND dic_name LIKE '%s' ORDER BY orth" % (
+                                aspect, marker[0], borrowed[0], dict)).fetchall()
+                        elif reflex == 'возвр.':
+                            result = g.db.execute(
+                                "SELECT orth, phon, sense, pos, gender, \
+                                 asp, dic_name, usg, etym_lang, ant, syn FROM test WHERE reflex='возвр.' \
+                                 asp='%s' AND usg='%s' AND etym_lang='%s' \
+                                AND dic_name LIKE '%s' ORDER BY orth" % (
+                                aspect, marker[0], borrowed[0], dict)).fetchall()
+                        elif reflex == 'невозвр.':
+                            result = g.db.execute(
+                                "SELECT orth, phon, sense, pos, gender, \
+                                 asp, dic_name, usg, etym_lang, ant, syn FROM test WHERE reflex IS NULL AND \
+                                 pos='глаг.' AND asp='%s' AND usg='%s' AND etym_lang='%s' \
+                                AND dic_name LIKE '%s' ORDER BY orth" % (
+                                aspect, marker[0], borrowed[0], dict)).fetchall()
+            elif borrowed != [] and pos=='None' and gender=='None' and aspect == 'None' and reflex == 'None':
                 if marker == []:
                     result = g.db.execute(
-                        "SELECT orth, phon, sense, pos, gender, \
+                    "SELECT orth, phon, sense, pos, gender, \
                      asp, dic_name, usg, etym_lang, ant, syn FROM test WHERE etym_lang='%s' \
-                    AND dic_name LIKE '%s' ORDER BY orth" % (borrowed[0], dict)).fetchall()
+                    AND dic_name LIKE '%s' ORDER BY orth" % (borrowed[0],dict)).fetchall()
                 else:
                     result = g.db.execute(
-                        "SELECT orth, phon, sense, pos, gender, \
+                    "SELECT orth, phon, sense, pos, gender, \
                      asp, dic_name, usg, etym_lang, ant, syn FROM test WHERE etym_lang='%s' \
-                     AND usg='%s' AND dic_name LIKE '%s' ORDER BY orth" % (borrowed[0], marker[0], dict)).fetchall()
-            elif marker != [] and pos == 'None' and gender == 'None' and aspect == 'None' and borrowed == []:
+                     AND usg='%s' AND dic_name LIKE '%s' ORDER BY orth" % (borrowed[0],marker[0],dict)).fetchall()
+            elif marker != [] and pos=='None' and gender=='None' and aspect == 'None' and borrowed==[] and reflex == 'None':
                 result = g.db.execute(
-                    "SELECT orth, phon, sense, pos, gender, \
+                "SELECT orth, phon, sense, pos, gender, \
                  asp, dic_name, usg, etym_lang, ant, syn FROM test WHERE usg='%s' \
-                AND dic_name LIKE '%s' ORDER BY orth" % (marker[0], dict)).fetchall()
-            elif dict != '%' and pos == 'None' and gender == 'None' and aspect == 'None' and marker == [] and borrowed == []:
+                AND dic_name LIKE '%s' ORDER BY orth" % (marker[0],dict)).fetchall()
+            elif dict != '%' and pos=='None' and gender=='None' and aspect == 'None' and marker == [] and borrowed==[] \
+                    and reflex == 'None':
                 result = g.db.execute(
-                    "SELECT orth, phon, sense, pos, gender, \
+                "SELECT orth, phon, sense, pos, gender, \
                  asp, dic_name, usg, etym_lang, ant, syn FROM test WHERE dic_name='%s' ORDER BY orth" % dict).fetchall()
+            elif reflex != 'None' and marker == [] and pos=='None' and gender=='None' and aspect == 'None' \
+                    and borrowed==[]:
+                if reflex == 'возвр.':
+                    result = g.db.execute(
+                        "SELECT orth, phon, sense, pos, gender, asp, dic_name, usg, etym_lang, ant, syn \
+                        FROM test WHERE reflex='возвр.' AND dic_name LIKE '%s' ORDER BY orth" % dict).fetchall()
+                elif reflex == 'невозвр.':
+                    result = g.db.execute(
+                        "SELECT orth, phon, sense, pos, gender, asp, dic_name, usg, etym_lang, ant, syn \
+                        FROM test WHERE reflex IS NULL AND pos='глаг.' AND dic_name LIKE '%s' ORDER BY orth" \
+                        % dict).fetchall()
+            elif reflex == 'None' and marker == [] and pos=='None' and gender!='None' and aspect == 'None' \
+                    and borrowed==[]:
+                result = g.db.execute(
+                    "SELECT orth, phon, sense, pos, gender, asp, dic_name, usg, etym_lang, ant, syn \
+                    FROM test WHERE gender LIKE '%s' AND dic_name LIKE '%s' ORDER BY orth" % (gender, dict)).fetchall()
+            elif reflex == 'None' and marker == [] and pos == 'None' and gender == 'None' and aspect != 'None' \
+                    and borrowed == []:
+                result = g.db.execute(
+                    "SELECT orth, phon, sense, pos, gender, asp, dic_name, usg, etym_lang, ant, syn \
+                    FROM test WHERE asp='%s' AND dic_name LIKE '%s' ORDER BY orth" % (aspect, dict)).fetchall()
+            elif reflex != 'None' and marker == [] and pos == 'None' and gender == 'None' and aspect != 'None' \
+                    and borrowed == []:
+                if reflex == 'возвр':
+                    result = g.db.execute(
+                        "SELECT orth, phon, sense, pos, gender, asp, dic_name, usg, etym_lang, ant, syn \
+                        FROM test WHERE reflex='возвр.' AND asp='%s' AND dic_name LIKE '%s' \
+                        ORDER BY orth" % (aspect, dict)).fetchall()
+                elif reflex == 'невозвр.':
+                    result = g.db.execute(
+                        "SELECT orth, phon, sense, pos, gender, asp, dic_name, usg, etym_lang, ant, syn \
+                        FROM test WHERE reflex IS NULL AND pos='глаг.' AND asp='%s' AND dic_name LIKE '%s' \
+                        ORDER BY orth" % (aspect, dict)).fetchall()
             with open(csv_path, 'w', newline='', encoding='utf-8') as csvfile:
                 fieldnames = ['orth', 'phon', 'sense', 'pos', 'gender', 'asp', 'dic_name', 'usg', 'etym_lang']
                 filewriter = csv.DictWriter(csvfile, delimiter=' ', fieldnames=fieldnames)
@@ -472,7 +589,7 @@ def extended_search_page():
                                          'etym_lang': str(item[8])})
             csvfile.close()
             length = len(result)
-            # print(result)
+            print(result)
             return render_template('Show_extended_entries.html', form=form, result=result, length=length)
     return render_template('Slovar_extended_search.html', form=form)
 
