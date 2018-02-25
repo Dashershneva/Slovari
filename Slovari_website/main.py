@@ -4,8 +4,11 @@
 from flask import Flask, request, json, Response, render_template_string, abort, render_template, jsonify
 from flask import g, url_for, redirect, send_from_directory
 from flask_wtf import Form
+from flask_mail import Mail, Message
+# from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
+from itsdangerous import URLSafeTimedSerializer as Serializer
 from wtforms import StringField, PasswordField, SelectField, SelectMultipleField, BooleanField, RadioField
-from wtforms.validators import InputRequired
+# from wtforms.validators import InputRequired
 import sqlite3
 import re
 import traceback
@@ -13,8 +16,8 @@ from lxml import etree
 import os
 import csv
 from flask_login import LoginManager, current_user, login_required, login_user, logout_user, LoginManager, UserMixin
-from werkzeug import secure_filename
-import shutil
+# from werkzeug import secure_filename
+# import shutil
 import os.path
 import string, random
 
@@ -30,10 +33,19 @@ users_path = os.path.join(BASE_DIR, 'users.csv')
 folder_path = os.path.join(BASE_DIR, 'csv_result/')
 
 app = Flask(__name__)
+
+app.config['MAIL_SERVER'] = 'smtp.mail.ru'
+app.config['MAIL_PORT'] = 465
+app.config['MAIL_USE_SSL'] = True
+app.config['MAIL_USERNAME'] = 'vyshka_slovari@inbox.ru'
+app.config['MAIL_PASSWORD'] = 'slovaripassword'
+app.config['ADMINS'] = ['vyshka_slovari@inbox.ru']
+
 app.config['SECRET_KEY'] = 'Do not tell anyone'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
-#DATABASE = 'slovari_final.db'
+mail = Mail(app)
+# DATABASE = 'slovari_final.db'
 
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -42,7 +54,7 @@ login_manager.login_view = 'login'
 
 @login_manager.user_loader
 def load_user(userid):
-    from models import User
+    # from models import User
     f = open(users_path, 'r', encoding='utf8').read().split('\n')
     for line in f:
         line = line.split(';')
@@ -59,6 +71,7 @@ def handle_exception(val):
     if val[0][0] is not None:
         return val
 
+
 def handle_gram(val):
     val_new = (' — ',)
     if val == []:
@@ -68,6 +81,7 @@ def handle_gram(val):
     if val[0][0] is not None:
         return val[0]
 
+
 def secure_query(word):
     re_clr = re.compile(u"[^a-zа-яё‘]", re.I + re.U)
     word = re_clr.sub(u' ', word)
@@ -75,50 +89,58 @@ def secure_query(word):
         word = word.split()[0]
     return word
 
-#extended search fields names
-pos_labels = [('сущ.','Существительное'),('глаг.','Глагол'),
-              ('прил.','Прилагательное'),('нареч.', 'Наречие'), ('числ.', 'Числительное'),('част.','Частица'),
-              (' предлог ','Предлог'), ('межд.','Междометие')]
-gender_labels = [('ж.','Женский'), ('м.','Мужской'), ('ср.','Средний'), ('%и%','Общий')]
-aspect_labels = [(' св. ','Совершенный'), (' нсв. ','Несовершенный')]
-reflex_labels = [('возвр.','Возвратный'),('невозвр.','Невозвратный')]
-borrowings_labels = [('азерб.','Азербайджанский'),('англ.','Английский'),('голл.','Голландский'),
-                     ('греч.','Греческий'),('исп.','Испанский'),('итал.', 'Итальянский'),('лат.','Латинский'),
-                     ('нем.','Немецкий'),('норв.','Норвежский'),('перс.','Персидский'),('польск.', 'Польский'),
-                     ('португ.','Португальский'),('румын.','Румынский'),('санкр.','Санскрит'),('сканд.','Скандинавское'),
-                     ('ст.-слав.', 'Старославянский'),('тур.','Турецкий'),('тюрк.','Тюркское'),('узбек.','Узбекский'),
-                     ('укр.','Украинский'), ('фин.', 'Финский'),('фр.','Французский'),('швед.','Шведский'),
-                     ('япон.','Японский')]
-marker_labels = [('авиа.','Авиационное'), ('анат.','Анатомическое'), ('антроп.','Антропологическое'),
-                 ('археол.','Археологическое'), ('биол.','Биологическое'), ('бухг.','Бухгалтерское'),
-                 ('воен.','Военное'),('вульг.','Вульгарное'), ('геогр.','Географическое'),('геод.','Геодезическое'),
-                 ('геол.', 'Геологическое'),('горн.','Горное дело'),('дипл.','Дипломатическое'),
-                 ('ж.-д.','Железнодорожное'),('жарг.','Жаргонное'), ('зоол.','Зоологическое'), ('ирон.','Ироничное'),
-                 ('ист.','Историческое'), ('кино.','Кинематографическое'), ('книжн.','Книжное'),
-                 ('лингв.','Лингвистическое'),('лит.', 'Литературное'),('лог.','Логическое'),
-                 ('матем.','Математическое'), ('мед.','Медицинское'),('метео.','Метеорологическое'), ('мор.','Морское'),
-                 ('муз.','Музыкальное'), ('нар.-поэт.','Народно-поэтическое'),('нар.-разг.','Народно-разговорное'),
-                 ('неодобр.','Неодобрительное'), ('офиц.','Официальное'),('полигр.','Полиграфическое'),
-                 ('почтит.','Почтительное'), ('поэт.','Поэтическое'), ('презрит.','Презрительное'),
-                 ('пренебр.','Пренебрежительное'), ('пчел.','Пчеловодческое'),
-                 ('разг.-сниж.','Разговорно-сниженное'),('рыб.','Рыболовное'),('с.-х.','Сельскохозяйственное'),
-                 ('сад.','Садоводческое'), ('спорт.','Спортивное'),('театр.','Театральное'),
-                 ('типогр.','Типографическое'),('трад.-нар.','Традиционно-народное'),
-                 ('трад.-поэт.','Традиционно-поэтическое'), ('уменьш.','Уменьшительное'),
-                 ('уничиж.','Уничижительное'), ('фам.','Фамильярное'),
-                 ('физ.','Физическое'), ('физиол.','Физиологическое'),('филос.','Философское'),
-                 ('фото.','Фотографическое'), ('хим.','Химическое'), ('церк.','Церковное'),
-                 ('шутл.','Шутливое'), ('экон.','Экономическое'), ('электр.','Электрическое'), ('ювел.','Ювелирное')]
 
-dict_labels = [(' Словарь эпитетов ',' Словарь эпитетов '),
-               ('Большой Энциклопедический Словарь','Большой Энциклопедический Словарь'),
-               ('Словарь антонимов','Словарь антонимов'),
+# extended search fields names
+pos_labels = [('сущ.', 'Существительное'), ('глаг.', 'Глагол'),
+              ('прил.', 'Прилагательное'), ('нареч.', 'Наречие'), ('числ.', 'Числительное'), ('част.', 'Частица'),
+              (' предлог ', 'Предлог'), ('межд.', 'Междометие')]
+gender_labels = [('ж.', 'Женский'), ('м.', 'Мужской'), ('ср.', 'Средний'), ('%и%', 'Общий')]
+aspect_labels = [(' св. ', 'Совершенный'), (' нсв. ', 'Несовершенный')]
+reflex_labels = [('возвр.', 'Возвратный'), ('невозвр.', 'Невозвратный')]
+borrowings_labels = [('азерб.', 'Азербайджанский'), ('англ.', 'Английский'), ('голл.', 'Голландский'),
+                     ('греч.', 'Греческий'), ('исп.', 'Испанский'), ('итал.', 'Итальянский'), ('лат.', 'Латинский'),
+                     ('нем.', 'Немецкий'), ('норв.', 'Норвежский'), ('перс.', 'Персидский'), ('польск.', 'Польский'),
+                     ('португ.', 'Португальский'), ('румын.', 'Румынский'), ('санкр.', 'Санскрит'),
+                     ('сканд.', 'Скандинавское'),
+                     ('ст.-слав.', 'Старославянский'), ('тур.', 'Турецкий'), ('тюрк.', 'Тюркское'),
+                     ('узбек.', 'Узбекский'),
+                     ('укр.', 'Украинский'), ('фин.', 'Финский'), ('фр.', 'Французский'), ('швед.', 'Шведский'),
+                     ('япон.', 'Японский')]
+marker_labels = [('авиа.', 'Авиационное'), ('анат.', 'Анатомическое'), ('антроп.', 'Антропологическое'),
+                 ('археол.', 'Археологическое'), ('биол.', 'Биологическое'), ('бухг.', 'Бухгалтерское'),
+                 ('воен.', 'Военное'), ('вульг.', 'Вульгарное'), ('геогр.', 'Географическое'),
+                 ('геод.', 'Геодезическое'),
+                 ('геол.', 'Геологическое'), ('горн.', 'Горное дело'), ('дипл.', 'Дипломатическое'),
+                 ('ж.-д.', 'Железнодорожное'), ('жарг.', 'Жаргонное'), ('зоол.', 'Зоологическое'),
+                 ('ирон.', 'Ироничное'),
+                 ('ист.', 'Историческое'), ('кино.', 'Кинематографическое'), ('книжн.', 'Книжное'),
+                 ('лингв.', 'Лингвистическое'), ('лит.', 'Литературное'), ('лог.', 'Логическое'),
+                 ('матем.', 'Математическое'), ('мед.', 'Медицинское'), ('метео.', 'Метеорологическое'),
+                 ('мор.', 'Морское'),
+                 ('муз.', 'Музыкальное'), ('нар.-поэт.', 'Народно-поэтическое'), ('нар.-разг.', 'Народно-разговорное'),
+                 ('неодобр.', 'Неодобрительное'), ('офиц.', 'Официальное'), ('полигр.', 'Полиграфическое'),
+                 ('почтит.', 'Почтительное'), ('поэт.', 'Поэтическое'), ('презрит.', 'Презрительное'),
+                 ('пренебр.', 'Пренебрежительное'), ('пчел.', 'Пчеловодческое'),
+                 ('разг.-сниж.', 'Разговорно-сниженное'), ('рыб.', 'Рыболовное'), ('с.-х.', 'Сельскохозяйственное'),
+                 ('сад.', 'Садоводческое'), ('спорт.', 'Спортивное'), ('театр.', 'Театральное'),
+                 ('типогр.', 'Типографическое'), ('трад.-нар.', 'Традиционно-народное'),
+                 ('трад.-поэт.', 'Традиционно-поэтическое'), ('уменьш.', 'Уменьшительное'),
+                 ('уничиж.', 'Уничижительное'), ('фам.', 'Фамильярное'),
+                 ('физ.', 'Физическое'), ('физиол.', 'Физиологическое'), ('филос.', 'Философское'),
+                 ('фото.', 'Фотографическое'), ('хим.', 'Химическое'), ('церк.', 'Церковное'),
+                 ('шутл.', 'Шутливое'), ('экон.', 'Экономическое'), ('электр.', 'Электрическое'),
+                 ('ювел.', 'Ювелирное')]
+
+dict_labels = [(' Словарь эпитетов ', ' Словарь эпитетов '),
+               ('Большой Энциклопедический Словарь', 'Большой Энциклопедический Словарь'),
+               ('Словарь антонимов', 'Словарь антонимов'),
                ('Словарь русских синонимов и сходных по смыслу выражений',
                 'Словарь русских синонимов и сходных по смыслу выражений'),
-               ('Толковый словарь Кузнецова','Толковый словарь Кузнецова'),
-               ('Толковый словарь Даля','Толковый словарь Даля')]
+               ('Толковый словарь Кузнецова', 'Толковый словарь Кузнецова'),
+               ('Толковый словарь Даля', 'Толковый словарь Даля')]
 
-#defining form fields for extended search
+
+# defining form fields for extended search
 class MyForm(Form):
     noun_field = RadioField('POS', choices=pos_labels)
     gender_field = RadioField('GENDER', choices=gender_labels)
@@ -137,13 +159,14 @@ class User(UserMixin):
         self.id = uid
         self.active = active
 
-    def is_authenticated():
+
+    def is_authenticated(self):
         return True
 
-    def is_active():
+    def is_active(self):
         return True
 
-    def is_anonymous():
+    def is_anonymous(self):
         return False
 
     def get_id(self):
@@ -151,20 +174,17 @@ class User(UserMixin):
 
     def get_files(self):
         all_files = os.listdir(os.path.join(BASE_DIR, UGC_UPLOAD_FOLDER))
-        user_files = [f for f in all_files if 'uid%s_'%self.id in f]
+        user_files = [f for f in all_files if 'uid%s_' % self.id in f]
         return user_files
 
     def count_files(self):
         all_files = os.listdir(os.path.join(BASE_DIR, UGC_UPLOAD_FOLDER))
-        user_files = [f for f in all_files if 'uid%s_'%self.id in f]
+        user_files = [f for f in all_files if 'uid%s_' % self.id in f]
         return len(user_files)
-
-
 
 
 @login_manager.user_loader
 def load_user(user_id):
-
     user_id = str(user_id)
     uid, firstname, lastname, email = '', '', '', ''
 
@@ -211,13 +231,11 @@ def before_first_request():
     #             print('user %s folder exists'%uid)
 
 
-
-
-
 @app.before_request
 def before_request():
     g.db = sqlite3.connect(db_path)
     g.user = current_user
+
 
 @app.route("/")
 @app.route("/Vyshka_slovari_main", methods=['POST', 'GET'])
@@ -228,6 +246,7 @@ def main_page():
     return render_template("Show_random.html",
                            rand_word=rand_word
                            )
+
 
 @app.route('/Vyshka_slovari_main/<word>', methods=['POST', 'GET'])
 def show_entries(word):
@@ -308,17 +327,21 @@ def show_entries(word):
                            meaning2=mng2,
                            meaning3=mng3)
 
+
 @app.route("/Vyshka_slovari_about")
 def about_page():
     return render_template('Slovar_about.html')
 
+
 @app.route("/Vyshka_slovari_dictionaries")
 def about_dict():
     return render_template('Dictionaries.html')
-	
+
+
 @app.route("/Vyshka_slovari_how_search_works")
 def how_search_works():
-	return render_template('Slovar_how_search_works.html')
+    return render_template('Slovar_how_search_works.html')
+
 
 def allowed_file(filename):
     return '.' in filename and \
@@ -349,103 +372,107 @@ def extended_search_page():
             if pos != 'None':
                 if aspect == 'None' and gender == 'None' and borrowed == [] and marker == []:
                     result = g.db.execute(
-                    "SELECT orth, phon, sense, pos, gender, \
+                        "SELECT orth, phon, sense, pos, gender, \
                      asp, dic_name, usg, etym_lang, ant, syn FROM test WHERE pos='%s' AND \
-                     dic_name LIKE '%s' AND orth != 'None' ORDER BY orth" % (pos,dict)).fetchall()
+                     dic_name LIKE '%s' AND orth != 'None' ORDER BY orth" % (pos, dict)).fetchall()
                 elif borrowed != [] and aspect == 'None' and gender == 'None' and marker == []:
                     result = g.db.execute(
-                    "SELECT orth, phon, sense, pos, gender, \
+                        "SELECT orth, phon, sense, pos, gender, \
                      asp, dic_name, usg, etym_lang, ant, syn FROM test WHERE pos='%s' \
-                     AND etym_lang='%s' AND dic_name LIKE '%s' ORDER BY orth" % (pos,borrowed[0],dict)).fetchall()
+                     AND etym_lang='%s' AND dic_name LIKE '%s' ORDER BY orth" % (pos, borrowed[0], dict)).fetchall()
                 elif marker != [] and aspect == 'None' and gender == 'None':
                     if borrowed == []:
                         result = g.db.execute(
-                        "SELECT orth, phon, sense, pos, gender, \
+                            "SELECT orth, phon, sense, pos, gender, \
                          asp, dic_name, usg, etym_lang, ant, syn FROM test WHERE pos='%s' \
                          AND usg='%s' AND dic_name LIKE '%s' ORDER BY orth" % (pos, marker[0], dict)).fetchall()
                     else:
                         result = g.db.execute(
-                        "SELECT orth, phon, sense, pos, gender, \
+                            "SELECT orth, phon, sense, pos, gender, \
                          asp, dic_name, usg, etym_lang, ant, syn FROM test WHERE pos='%s' AND usg='%s' \
-                        AND etym_lang='%s' AND dic_name LIKE '%s' ORDER BY orth" % (pos, marker[0], borrowed[0],dict)).fetchall()
+                        AND etym_lang='%s' AND dic_name LIKE '%s' ORDER BY orth" % (
+                            pos, marker[0], borrowed[0], dict)).fetchall()
                 elif gender != 'None' and aspect == 'None':
                     if borrowed == [] and marker == []:
                         result = g.db.execute(
-                        "SELECT orth, phon, sense, pos, gender, \
+                            "SELECT orth, phon, sense, pos, gender, \
                          asp, dic_name, usg, etym_lang, ant, syn FROM test WHERE gender LIKE '%s' \
                          AND pos='%s' AND dic_name LIKE '%s' ORDER BY orth" % (gender, pos, dict)).fetchall()
                     elif borrowed == [] and marker != []:
                         result = g.db.execute(
-                        "SELECT orth, phon, sense, pos, ant, gender, \
+                            "SELECT orth, phon, sense, pos, ant, gender, \
                          asp, dic_name, usg, etym_lang, syn FROM test WHERE gender='%s' \
                          AND usg='%s' AND dic_name LIKE '%s' ORDER BY orth" % (gender, marker[0], dict)).fetchall()
                     elif borrowed != [] and marker == []:
                         result = g.db.execute(
-                        "SELECT orth, phon, sense, pos, gender, \
+                            "SELECT orth, phon, sense, pos, gender, \
                          asp, dic_name, usg, etym_lang, ant, syn FROM test WHERE gender='%s' \
-                         AND etym_lang='%s' AND dic_name LIKE '%s' ORDER BY orth" % (gender, borrowed[0], dict)).fetchall()
+                         AND etym_lang='%s' AND dic_name LIKE '%s' ORDER BY orth" % (
+                            gender, borrowed[0], dict)).fetchall()
                     else:
                         result = g.db.execute(
-                        "SELECT orth, phon, sense, pos, gender, \
+                            "SELECT orth, phon, sense, pos, gender, \
                          asp, dic_name, usg, etym_lang, ant, syn FROM test WHERE gender='%s' \
                          AND pos='%s' AND etym_lang='%s' AND usg='%s' \
-                          AND dic_name LIKE '%s' ORDER BY orth" % (gender,pos,borrowed[0],marker[0], dict)).fetchall()
+                          AND dic_name LIKE '%s' ORDER BY orth" % (
+                            gender, pos, borrowed[0], marker[0], dict)).fetchall()
                 elif aspect != 'None' and gender == 'None':
                     if borrowed == [] and marker == []:
                         result = g.db.execute(
-                        "SELECT orth, phon, sense, pos, gender, \
+                            "SELECT orth, phon, sense, pos, gender, \
                          asp, dic_name, usg, etym_lang, ant, syn FROM test WHERE \
                          asp='%s' AND dic_name LIKE '%s' ORDER BY orth" % (aspect, dict)).fetchall()
                     elif borrowed != [] and marker == []:
                         result = g.db.execute(
-                        "SELECT orth, phon, sense, pos, gender, \
+                            "SELECT orth, phon, sense, pos, gender, \
                          asp, dic_name, usg, etym_lang, ant, syn FROM test WHERE  \
                          asp='%s' AND etym_lang='%s' AND dic_name LIKE '%s' ORDER BY orth"
-                        % (aspect,borrowed[0],dict)).fetchall()
+                            % (aspect, borrowed[0], dict)).fetchall()
                     elif borrowed == [] and marker != []:
                         result = g.db.execute(
-                        "SELECT orth, phon, sense, pos, gender, \
+                            "SELECT orth, phon, sense, pos, gender, \
                          asp, dic_name, usg, etym_lang, ant, syn FROM test WHERE \
-                        asp='%s' AND usg='%s' AND dic_name LIKE '%s' ORDER BY orth" % (aspect,marker[0],dict)).fetchall()
+                        asp='%s' AND usg='%s' AND dic_name LIKE '%s' ORDER BY orth" % (
+                            aspect, marker[0], dict)).fetchall()
                     else:
                         result = g.db.execute(
-                        "SELECT orth, phon, sense, pos, gender, \
+                            "SELECT orth, phon, sense, pos, gender, \
                          asp, dic_name, usg, etym_lang, ant, syn FROM test WHERE \
                          asp='%s' AND usg='%s' AND etym_lang='%s' \
-                        AND dic_name LIKE '%s' ORDER BY orth" % (aspect,marker[0], borrowed[0],dict)).fetchall()
-            elif borrowed != [] and pos=='None' and gender=='None' and aspect == 'None':
+                        AND dic_name LIKE '%s' ORDER BY orth" % (aspect, marker[0], borrowed[0], dict)).fetchall()
+            elif borrowed != [] and pos == 'None' and gender == 'None' and aspect == 'None':
                 if marker == []:
                     result = g.db.execute(
-                    "SELECT orth, phon, sense, pos, gender, \
+                        "SELECT orth, phon, sense, pos, gender, \
                      asp, dic_name, usg, etym_lang, ant, syn FROM test WHERE etym_lang='%s' \
-                    AND dic_name LIKE '%s' ORDER BY orth" % (borrowed[0],dict)).fetchall()
+                    AND dic_name LIKE '%s' ORDER BY orth" % (borrowed[0], dict)).fetchall()
                 else:
                     result = g.db.execute(
-                    "SELECT orth, phon, sense, pos, gender, \
+                        "SELECT orth, phon, sense, pos, gender, \
                      asp, dic_name, usg, etym_lang, ant, syn FROM test WHERE etym_lang='%s' \
-                     AND usg='%s' AND dic_name LIKE '%s' ORDER BY orth" % (borrowed[0],marker[0],dict)).fetchall()
-            elif marker != [] and pos=='None' and gender=='None' and aspect == 'None' and borrowed==[]:
+                     AND usg='%s' AND dic_name LIKE '%s' ORDER BY orth" % (borrowed[0], marker[0], dict)).fetchall()
+            elif marker != [] and pos == 'None' and gender == 'None' and aspect == 'None' and borrowed == []:
                 result = g.db.execute(
-                "SELECT orth, phon, sense, pos, gender, \
+                    "SELECT orth, phon, sense, pos, gender, \
                  asp, dic_name, usg, etym_lang, ant, syn FROM test WHERE usg='%s' \
-                AND dic_name LIKE '%s' ORDER BY orth" % (marker[0],dict)).fetchall()
-            elif dict != '%' and pos=='None' and gender=='None' and aspect == 'None' and marker == [] and borrowed==[]:
+                AND dic_name LIKE '%s' ORDER BY orth" % (marker[0], dict)).fetchall()
+            elif dict != '%' and pos == 'None' and gender == 'None' and aspect == 'None' and marker == [] and borrowed == []:
                 result = g.db.execute(
-                "SELECT orth, phon, sense, pos, gender, \
+                    "SELECT orth, phon, sense, pos, gender, \
                  asp, dic_name, usg, etym_lang, ant, syn FROM test WHERE dic_name='%s' ORDER BY orth" % dict).fetchall()
             with open(csv_path, 'w', newline='', encoding='utf-8') as csvfile:
                 fieldnames = ['orth', 'phon', 'sense', 'pos', 'gender', 'asp', 'dic_name', 'usg', 'etym_lang']
                 filewriter = csv.DictWriter(csvfile, delimiter=' ', fieldnames=fieldnames)
                 filewriter.writeheader()
                 for item in result:
-                    filewriter.writerow({'orth':str(item[0]), 'phon':str(item[1]),
-                                     'sense':str(item[2]), 'pos':str(item[3]),
-                                     'gender':str(item[4]), 'asp':str(item[5]),
-                                     'dic_name':str(item[6]), 'usg':str(item[7]),
-                                     'etym_lang':str(item[8])})
+                    filewriter.writerow({'orth': str(item[0]), 'phon': str(item[1]),
+                                         'sense': str(item[2]), 'pos': str(item[3]),
+                                         'gender': str(item[4]), 'asp': str(item[5]),
+                                         'dic_name': str(item[6]), 'usg': str(item[7]),
+                                         'etym_lang': str(item[8])})
             csvfile.close()
             length = len(result)
-            print(result)
+            # print(result)
             return render_template('Show_extended_entries.html', form=form, result=result, length=length)
     return render_template('Slovar_extended_search.html', form=form)
 
@@ -454,13 +481,16 @@ def extended_search_page():
 def download():
     return send_from_directory(folder_path, "results.csv")
 
+
 @app.route('/csv_result/Instruktsia_po_zapolneniyu_shablona_TEI.pdf')
 def instruction():
     return send_from_directory(folder_path, "Instruktsia_po_zapolneniyu_shablona_TEI.pdf")
 
+
 @app.route('/csv_result/TEI-shablon.xlsx')
 def template():
     return send_from_directory(folder_path, "TEI-shablon.xlsx")
+
 
 @app.route("/Vyshka_slovari_enter")
 def enter_page():
@@ -475,7 +505,7 @@ def checkUserId():
 
     if not validateEmail(email):
         # return redirect(url_for('enter_page'))
-        return render_template('Slovar_enter.html', mistake = 'Неверный формат email')
+        return render_template('Slovar_enter.html', mistake='Неверный формат email')
 
     db = open(users_path, 'r', encoding='utf8').read().split('\n')
     for line in db:
@@ -495,10 +525,10 @@ def checkUserId():
         login_user(u)
         return redirect(url_for('main_page'))
     else:
-        uid =  None
+        uid = None
         # print('bad pair login\pw')
         # return redirect(url_for('enter_page'))
-        return render_template('Slovar_enter.html', mistake = 'Проверьте правильность логина и пароля')
+        return render_template('Slovar_enter.html', mistake='Проверьте правильность логина и пароля')
 
 
 def validateEmail(email):
@@ -517,9 +547,17 @@ def validateInput(line):
         return True
 
 
+def checkIfUserExists(email):
+    with open(users_path, 'r', encoding='utf8') as file:
+        rows = [i.strip().split(';') for i in file.readlines()[1:]]
+        for row in rows:
+            if row[3] == email:
+                return True
+    return False
+
+
 @app.route('/new_user', methods=['GET', 'POST'])
 def new_user():
-
     f = open(users_path, 'r', encoding='utf8').read().split('\n')[1:]
     try:
         last_id = int(f[-1].split(';')[0])
@@ -533,9 +571,11 @@ def new_user():
     password_check = request.form['password_check']
 
     mistake = None
+    if checkIfUserExists(email):
+        mistake = 'Пользователь с таким email уже существует'
     if password != password_check:
         mistake = 'Пароли не совпадают'
-    if not validateEmail(email) :
+    if not validateEmail(email):
         mistake = 'Неверный формат email'
     for i in [firstname, lastname, password, password_check]:
         if not validateInput(i):
@@ -547,13 +587,9 @@ def new_user():
         return render_template('Slovar_register.html', mistake=mistake)
 
     else:
-        nu = '%s;%s;%s;%s;%s'%(new_id, firstname, lastname, email, password)
-        
-        f_ = open(users_path, 'r', encoding='utf8').read()
-        f = open(users_path, 'w', encoding='utf8')
-        f.write(f_)
-        f.write('\n'+nu)
-        f.close()
+        nu = '%s;%s;%s;%s;%s' % (new_id, firstname, lastname, email, password)
+        with open(users_path, 'a', encoding='utf8') as f:
+            f.write('\n' + nu)
 
         u = User(email, new_id, firstname, lastname)
         login_user(u)
@@ -574,11 +610,10 @@ def register_page():
 
 @app.route("/cabinet", methods=['GET', 'POST'])
 def cabinet():
-    return render_template('cabinet.html', mistake = '')
+    return render_template('cabinet.html', mistake='')
 
 
 def validate_slov(fname, SCHEME_FILE=scheme_path):
-
     with open(SCHEME_FILE) as xsd:
         xmlschema_doc = etree.parse(xsd)
     xmlschema = etree.XMLSchema(xmlschema_doc)
@@ -601,14 +636,115 @@ def validate_slov(fname, SCHEME_FILE=scheme_path):
 
 def idGen():
     s = string.ascii_letters + string.digits
-    return ''.join([random.choice(s) for _ in range(0,24)])
+    return ''.join([random.choice(s) for _ in range(0, 24)])
+
+
+def rewrite_password(user_id, new_password):
+    with open(users_path, 'r', encoding='utf8') as file:
+        rows = [i.strip().split(';') for i in file.readlines()[1:]]
+        for i in range(len(rows)):
+            if rows[i][0] == user_id:
+                rows[i][4] = new_password
+    with open(users_path, 'w', encoding='utf8') as file2:
+        for row in rows:
+            file2.write('\n%s;%s;%s;%s;%s' % tuple(row))
+
+@app.route("/change_password", methods=['POST', 'GET'])
+def change_password():
+    message = ''
+    if current_user.is_authenticated:
+        if request.form:
+                old_password = request.form['old_password']
+                password = request.form['password']
+                password_check = request.form['password_check']
+                current_password = []
+                with open(users_path, 'r', encoding='utf8') as file:
+                    rows = [i.strip().split(';') for i in file.readlines()[1:]]
+                    for row in rows:
+                        if row[0] == current_user.id:
+                            current_password = row[4]
+                if old_password != current_password:
+                    message = 'Неверный пароль'
+                if password != password_check:
+                    message = 'Пароли не совпадают'
+                for i in [password, password_check]:
+                    if not validateInput(i):
+                        message = 'Недопустимые символы'
+                        break
+                if not message:
+                    rewrite_password(current_user.id, password)
+                    message = 'Пароль успешно изменен'
+    else:
+        message = 'Чтобы сменить пароль, необходимо сначала войти в личный кабинет пользователя'
+    return render_template('change_password.html', message=message)
+
+
+@app.route("/forgot_password", methods=['POST', 'GET'])
+def forgot_password():
+    message = ''
+    if request.form:
+        email = request.form['e-mail']
+        if not validateEmail(email):
+            message = 'Неверный формат email'
+        elif checkIfUserExists(email):
+            send_pw_recovery_email(email)
+            message = 'Письмо успешно отправлено'
+        else:
+            message = 'Пользователя с таким email не существует'
+    return render_template('forgot_password.html', message=message)
+
+
+def send_pw_recovery_email(email):
+    password_reset_serializer = Serializer(app.config['SECRET_KEY'])
+
+    password_reset_url = url_for(
+        'reset_with_token',
+        token=password_reset_serializer.dumps(email, salt='password-reset-salt'),
+        _external=True)
+    msg = Message("Восстановление пароля",
+                  sender=app.config['ADMINS'][0],
+                  recipients=[email])
+    msg.body = "Для восстановления пароля перейдите по ссылке "+password_reset_url
+    mail.send(msg)
+
+
+@app.route('/reset_password/<token>', methods=["GET", "POST"])
+def reset_with_token(token):
+    message = ''
+    # время действия ссылки для смены пароля в секундах (сейчас = 10 часов)
+    hours_10 = 36000
+    try:
+        password_reset_serializer = Serializer(app.config['SECRET_KEY'])
+        email = password_reset_serializer.loads(token, salt='password-reset-salt', max_age=hours_10)
+    except:
+        message = 'The password reset link is invalid or has expired.'
+        return render_template('reset_password.html', token='bad_token', message=message, bad_token=True)
+
+    if request.form:
+        user_id = None
+        password = request.form['password']
+        password_check = request.form['password_check']
+        if password != password_check:
+            message = 'Пароли не совпадают'
+        else:
+            with open(users_path, 'r', encoding='utf8') as file:
+                rows = [i.strip().split(';') for i in file.readlines()[1:]]
+                for i in range(len(rows)):
+                    if rows[i][3] == email:
+                        user_id = rows[i][0]
+            if user_id:
+                rewrite_password(user_id, password)
+                message = 'Пароль успешно изменен'
+            else:
+                message = 'Что-то пошло не так'
+    return render_template('reset_password.html', token=token, message=message, bad_token=False)
 
 
 @app.route("/upload_slov", methods=['GET', 'POST'])
 def uploadSlov():
     if request.method == 'POST':
         f = request.files['file']
-        new_fname = 'uid%s_%s_%s'%( current_user.id, idGen(), f.filename)
+        new_fname = 'uid%s_%s_%s' % (current_user.id, idGen(), f.filename)
         f.save(os.path.join(BASE_DIR, UGC_UPLOAD_FOLDER, new_fname))
 
         is_valid = validate_slov(os.path.join(BASE_DIR, UGC_UPLOAD_FOLDER, new_fname))
