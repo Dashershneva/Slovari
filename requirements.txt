@@ -4,3 +4,5 @@ Flask-WTF==0.14.2
 lxml==4.1.0
 Werkzeug==0.12.2
 WTForms==2.1
+itsdangerous==0.24
+Flask-Mail==0.9.1
